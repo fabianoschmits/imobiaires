@@ -1,5 +1,5 @@
 'use strict';
-import { signIn, signUp, signOut, createAgency, getMyAgency, fetchMyProperties, upsertProperty, uploadPhoto, deleteProperty, upsertOffer, isAdmin } from './supabase.js';
+import { signIn, signUp, signOut, refreshSession, createAgency, getMyAgency, fetchMyProperties, upsertProperty, uploadPhoto, deleteProperty, upsertOffer, isAdmin } from './supabase.js';
 import { money, fmt, esc, renderIllustration } from './catalog.js';
 import { readStorage, writeStorage } from './storage.js';
 import { icon } from './icons.js';
@@ -59,7 +59,28 @@ async function showDash() {
 
 /* ─── Dashboard ─── */
 async function renderDash() {
-  const props = await fetchMyProperties(session, myAgency?.id, adminMode);
+  let props = [];
+  try {
+    props = await fetchMyProperties(session, myAgency?.id, adminMode);
+  } catch (err) {
+    if (String(err.message).includes('401')) {
+      const refreshed = await refreshSession(session).catch(() => null);
+      if (refreshed) {
+        session = refreshed;
+        writeStorage('sb-session', session);
+        props = await fetchMyProperties(session, myAgency?.id, adminMode).catch(() => []);
+      } else {
+        writeStorage('sb-session', null);
+        session = null;
+        myAgency = null;
+        showAuth();
+        showError('Sua sessão expirou. Entre novamente.');
+        return;
+      }
+    } else {
+      toast('Erro ao carregar imóveis: ' + err.message);
+    }
+  }
   const totalOffers = props.reduce((s, p) => s + (p.offers?.length || 0), 0);
 
   $('painelStats').innerHTML = `
@@ -468,8 +489,12 @@ setupPhotoUpload();
   const saved = readStorage('sb-session', null);
   if (saved?.access_token) {
     session = saved;
-    // Admin can enter painel without an agency linked
-    adminMode = session.user?.email === ADMIN_EMAIL;
+    const fresh = await refreshSession(session).catch(() => null);
+    if (fresh) {
+      session = fresh;
+      writeStorage('sb-session', session);
+    }
+    adminMode = session.user?.email?.toLowerCase() === ADMIN_EMAIL;
     myAgency = await getMyAgency(session).catch(() => null);
     if (myAgency || adminMode) { await showDash(); return; }
   }

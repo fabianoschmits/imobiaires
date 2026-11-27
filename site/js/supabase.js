@@ -56,6 +56,18 @@ export async function signIn(email, password) {
   return data; // { access_token, refresh_token, user, ... }
 }
 
+export async function refreshSession(session) {
+  if (!session?.refresh_token) return null;
+  const res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+    method: 'POST',
+    headers: H(),
+    body: JSON.stringify({ refresh_token: session.refresh_token }),
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data?.access_token ? data : null;
+}
+
 export async function signOut(session) {
   await fetch(SUPABASE_URL + '/auth/v1/logout', {
     method: 'POST',
