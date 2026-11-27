@@ -112,12 +112,12 @@ let propMap = null, mapPoints = [], mapDrawLayer = null;
 function initPropMap() {
   if (propMap) return;
   const CENTER = [-29.606, -52.192];
-  // maxZoom 22 com overzoom: estica tiles até ~50 m de escala
-  propMap = window.L.map('propMap', { zoomControl: true, maxZoom: 22 }).setView(CENTER, 14);
-  window.L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  // Mapa de ruas/construções (OSM) com overzoom até ~50 m
+  propMap = window.L.map('propMap', { zoomControl: true, maxZoom: 22 }).setView(CENTER, 15);
+  window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 22,
     maxNativeZoom: 19,
-    attribution: 'Tiles © Esri',
+    attribution: '© OpenStreetMap contributors',
   }).addTo(propMap);
   mapDrawLayer = window.L.layerGroup().addTo(propMap);
   propMap.on('click', (e) => {
