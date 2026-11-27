@@ -52,8 +52,8 @@ export function fromSupabaseRow(row) {
       : row.points
         ? JSON.parse(row.points)
         : [],
-    photo: row.photo_url || null,
-    photo_url: row.photo_url || null,
+    photo: row.photo_url || (Array.isArray(row.photos) && row.photos[0]) || null,
+    photo_url: row.photo_url || (Array.isArray(row.photos) && row.photos[0]) || null,
     photos: Array.isArray(row.photos) && row.photos.length
       ? row.photos
       : (row.photo_url ? [row.photo_url] : []),
@@ -138,10 +138,11 @@ export function sortAndBoundProperties(filtered, { map, withinBounds, sort }) {
 }
 
 export function renderIllustration(p) {
-  if (p.photo_url) {
+  const cover = p.photo_url || (Array.isArray(p.photos) && p.photos[0]) || '';
+  if (cover) {
     return (
       '<img src="' +
-      esc(p.photo_url) +
+      esc(cover) +
       '" alt="' +
       esc(p.title || 'Foto do imóvel') +
       '" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.hidden=false">' +
