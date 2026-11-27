@@ -768,29 +768,43 @@ th { color: var(--muted); font-weight: 600; }
   .mapwrap { height: 100%; }
 
   .panel {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 600;
-    max-height: 74%;
-    height: 0;
+    z-index: 950;
+    height: 74dvh;
+    max-height: 74dvh;
+    transform: translateY(100%);
     visibility: hidden;
+    pointer-events: none;
     border-left: 0;
     border-radius: var(--r-sheet) var(--r-sheet) 0 0;
     box-shadow: 0 -6px 24px rgba(37, 54, 75, 0.16);
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    transition: height var(--t-med) var(--ease);
+    transition: transform 280ms var(--ease), height 260ms var(--ease), max-height 260ms var(--ease), visibility 280ms;
+    will-change: transform, height;
   }
-  .panel.open { height: 74%; visibility: visible; }
-  .panel.detailopen { height: 78%; visibility: visible; }
+  .panel.open {
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .panel.detailopen {
+    height: 78dvh;
+    max-height: 78dvh;
+  }
+  .panel.detailopen.expanded {
+    height: calc(100dvh - 66px);
+    max-height: calc(100dvh - 66px);
+  }
   .panel.open ~ .mapwrap { pointer-events: none; }
 
   .panel-handle {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px 0 4px;
+    padding: 12px 0 8px;
     cursor: grab;
     touch-action: none;
     position: sticky;
@@ -798,7 +812,8 @@ th { color: var(--muted); font-weight: 600; }
     background: var(--surface);
     z-index: 5;
   }
-  .panel-handle span { width: 38px; height: 4px; border-radius: 999px; background: var(--line); }
+  .panel-handle:active { cursor: grabbing; }
+  .panel-handle span { width: 42px; height: 4px; border-radius: 999px; background: #cbd5e1; }
 
   .card { grid-template-columns: 112px minmax(0, 1fr); }
   .cardphoto { width: 112px; height: 108px; }

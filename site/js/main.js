@@ -89,7 +89,7 @@ function hideDetail() {
   $('detail').hidden = true;
   $('cards').hidden = false;
   q('.panelhead').hidden = false;
-  $('panel').classList.remove('detailopen');
+  $('panel').classList.remove('detailopen', 'expanded');
   render();
 }
 
@@ -739,6 +739,16 @@ document.addEventListener('keydown', (e) => {
   let deltaY = 0;
   let dragging = false;
 
+  // Expand detail sheet near header when scrolling down on mobile
+  panel.addEventListener('scroll', () => {
+    if (!isMobile() || !panel.classList.contains('detailopen')) return;
+    if (panel.scrollTop > 24) {
+      panel.classList.add('expanded');
+    } else if (panel.scrollTop <= 2) {
+      panel.classList.remove('expanded');
+    }
+  }, { passive: true });
+
   handle.addEventListener('pointerdown', (e) => {
     if (!isMobile()) return;
     dragging = true;
@@ -759,8 +769,8 @@ document.addEventListener('keydown', (e) => {
     dragging = false;
     panel.style.transition = '';
     panel.style.transform = '';
-    if (deltaY > 80) {
-      panel.classList.remove('detailopen');
+    if (deltaY > 55) {
+      panel.classList.remove('detailopen', 'expanded');
       setPanel(false);
       if (active) hideDetail();
     }
