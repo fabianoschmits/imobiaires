@@ -469,9 +469,13 @@ $('clearCompare').onclick = () => {
   comp.clear();
   refreshDetail();
 };
-$('search').oninput = hideDetail;
+$('search').oninput = () => {
+  hideDetail();
+  renderSuggestions();
+};
 $('clearSearch').onclick = () => {
   $('search').value = '';
+  $('searchSuggest').hidden = true;
   hideDetail();
 };
 $('sort').onchange = render;
@@ -623,4 +627,131 @@ const initialId = new URLSearchParams(location.search).get('imovel');
 if (initialId && all().some((p) => p.id === initialId)) select(initialId);
 if (!initialId && isMobile()) setPanel(false);
 window.addEventListener('resize', () => mapCtrl.invalidateSize());
+
+function renderSuggestions() {
+  const box = $('searchSuggest');
+  const raw = $('search').value.trim();
+  if (!raw) {
+    box.hidden = true;
+    box.innerHTML = '';
+    return;
+  }
+  const norm = (v) =>
+    String(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const qNorm = norm(raw);
+  const items = all();
+  const suggestions = [];
+
+  [...new Set(items.map((p) => p.district))]
+    .filter((d) => norm(d).includes(qNorm))
+    .slice(0, 3)
+    .forEach((d) =>
+      suggestions.push({ kind: 'district', value: d, label: d, meta: 'Bairro' })
+    );
+
+  ['Terreno', 'Casa', 'Apartamento', 'Comercial']
+    .filter((t) => norm(t).includes(qNorm))
+    .slice(0, 2)
+    .forEach((t) =>
+      suggestions.push({ kind: 'type', value: t, label: t, meta: 'Tipo' })
+    );
+
+  items
+    .filter((p) => norm(p.title + ' ' + p.district + ' ' + p.id).includes(qNorm))
+    .slice(0, 4)
+    .forEach((p) =>
+      suggestions.push({
+        kind: 'property',
+        value: p.id,
+        label: p.title,
+        meta: p.district + ' · ' + p.id,
+      })
+    );
+
+  if (!suggestions.length) {
+    box.hidden = true;
+    box.innerHTML = '';
+    return;
+  }
+  box.innerHTML = suggestions
+    .map(
+      (s) =>
+        '<button type="button" data-suggest-kind="' +
+        s.kind +
+        '" data-suggest-val="' +
+        esc(s.value) +
+        '"><span>' +
+        esc(s.label) +
+        '</span><small>' +
+        esc(s.meta) +
+        '</small></button>'
+    )
+    .join('');
+  box.hidden = false;
+}
+
+$('searchSuggest').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-suggest-kind]');
+  if (!btn) return;
+  const { suggestKind, suggestVal } = btn.dataset;
+  $('searchSuggest').hidden = true;
+  if (suggestKind === 'property') {
+    select(suggestVal);
+  } else if (suggestKind === 'type') {
+    type = suggestVal;
+    qa('[data-type]').forEach((x) => x.classList.toggle('active', x.dataset.type === type));
+    $('search').value = '';
+    hideDetail();
+  } else {
+    $('search').value = suggestVal;
+    hideDetail();
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search')) $('searchSuggest').hidden = true;
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') $('searchSuggest').hidden = true;
+});
+
+(function initPanelDrag() {
+  const handle = $('panelHandle');
+  const panel = $('panel');
+  if (!handle || !panel) return;
+  let startY = 0;
+  let deltaY = 0;
+  let dragging = false;
+
+  handle.addEventListener('pointerdown', (e) => {
+    if (!isMobile()) return;
+    dragging = true;
+    startY = e.clientY;
+    deltaY = 0;
+    panel.style.transition = 'none';
+    handle.setPointerCapture(e.pointerId);
+  });
+
+  handle.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    deltaY = Math.max(0, e.clientY - startY);
+    panel.style.transform = 'translateY(' + deltaY + 'px)';
+  });
+
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    panel.style.transition = '';
+    panel.style.transform = '';
+    if (deltaY > 80) {
+      panel.classList.remove('detailopen');
+      setPanel(false);
+      if (active) hideDetail();
+    }
+  };
+
+  handle.addEventListener('pointerup', endDrag);
+  handle.addEventListener('pointercancel', endDrag);
+})();
 
