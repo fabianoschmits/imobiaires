@@ -485,6 +485,10 @@ document.addEventListener('click', (e) => {
     render();
   }
   if (b.id === 'offerHere') openOffer(active);
+  if (b.dataset.editOffer !== undefined) {
+    openOffer(b.dataset.editOffer);
+    return;
+  }
   if (b.id === 'shareProp') {
     const url = new URL(location.href);
     url.searchParams.set('imovel', active);
