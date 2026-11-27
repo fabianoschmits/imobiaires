@@ -336,6 +336,12 @@ function populateDistrict() {
 }
 
 function openAgency() {
+  const session = readStorage('session', null);
+  if (!session) {
+    openDialog('agencyAuthDialog');
+    return;
+  }
+  $('agencySessionInfo').textContent = 'Conectado como ' + session.name + ' (' + session.email + ')';
   $('mineCount').textContent = mine.length;
   $('offerCount').textContent = extra.length;
   $('mineList').innerHTML = mine.length
@@ -358,16 +364,20 @@ function openAgency() {
 }
 
 function openOffer(id) {
+  const session = readStorage('session', null);
   $('offerProperty').innerHTML = all()
     .map((p) => '<option value="' + p.id + '">' + esc(p.id + ' — ' + p.title) + '</option>')
     .join('');
   $('offerForm').reset();
+  if (session?.name) $('offerForm').elements.agency.value = session.name;
   if (id) $('offerProperty').value = id;
   openDialog('offerDialog');
 }
 
 function newProp() {
+  const session = readStorage('session', null);
   $('propertyForm').reset();
+  if (session?.name) $('propertyForm').elements.agency.value = session.name;
   photoData = '';
   draftLocation = null;
   $('locationStatus').textContent = 'Localização pendente';
@@ -527,6 +537,60 @@ $('filterForm').onsubmit = (e) => {
   hideDetail();
 };
 $('agency').onclick = openAgency;
+$('authTabLogin').onclick = () => {
+  $('authTabLogin').classList.add('active');
+  $('authTabRegister').classList.remove('active');
+  $('loginForm').hidden = false;
+  $('registerForm').hidden = true;
+};
+$('authTabRegister').onclick = () => {
+  $('authTabRegister').classList.add('active');
+  $('authTabLogin').classList.remove('active');
+  $('registerForm').hidden = false;
+  $('loginForm').hidden = true;
+};
+$('loginForm').onsubmit = (e) => {
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(e.target));
+  const accounts = readStorage('accounts', []);
+  const acc = accounts.find(
+    (a) => a.email.toLowerCase() === f.email.trim().toLowerCase() && a.password === f.password
+  );
+  if (!acc) {
+    toast('E-mail ou senha inválidos neste navegador');
+    return;
+  }
+  writeStorage('session', { name: acc.name, email: acc.email, phone: acc.phone || '' }, toast);
+  closeDialog('agencyAuthDialog');
+  openAgency();
+  toast('Bem-vindo, ' + acc.name + '!');
+};
+$('registerForm').onsubmit = (e) => {
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(e.target));
+  const accounts = readStorage('accounts', []);
+  const email = f.email.trim().toLowerCase();
+  if (accounts.some((a) => a.email.toLowerCase() === email)) {
+    toast('Já existe uma conta com este e-mail');
+    return;
+  }
+  const acc = {
+    name: f.name.trim(),
+    email,
+    phone: (f.phone || '').trim(),
+    password: f.password,
+  };
+  if (!writeStorage('accounts', [...accounts, acc], toast)) return;
+  writeStorage('session', { name: acc.name, email: acc.email, phone: acc.phone }, toast);
+  closeDialog('agencyAuthDialog');
+  openAgency();
+  toast('Conta criada com sucesso!');
+};
+$('agencyLogout').onclick = () => {
+  localStorage.removeItem('t360-session');
+  closeDialog('agencyDialog');
+  toast('Sessão encerrada');
+};
 $('newProperty').onclick = () => {
   closeDialog('agencyDialog');
   newProp();
