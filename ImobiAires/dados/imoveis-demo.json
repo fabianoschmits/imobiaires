@@ -1,0 +1,406 @@
+{
+  "center": [
+    -29.606,
+    -52.192
+  ],
+  "properties": [
+    {
+      "id": "T01",
+      "title": "Terreno residencial de esquina",
+      "type": "Terreno",
+      "district": "Bela Vista",
+      "lat": -29.5998,
+      "lng": -52.191,
+      "area": 450,
+      "front": 15,
+      "depth": 30,
+      "beds": 0,
+      "deal": "Venda",
+      "description": "Exemplo de terreno residencial. Dimensões informadas para demonstração; não correspondem a cadastro real.",
+      "points": [
+        [
+          -29.599934746676247,
+          -52.19107748544844
+        ],
+        [
+          -29.599934746676247,
+          -52.190922514551566
+        ],
+        [
+          -29.59966525332375,
+          -52.190922514551566
+        ],
+        [
+          -29.59966525332375,
+          -52.19107748544844
+        ]
+      ],
+      "offers": [
+        {
+          "agency": "Imobiliária Horizonte (demo)",
+          "price": 149900
+        },
+        {
+          "agency": "Imobiliária Raízes (demo)",
+          "price": 160000
+        },
+        {
+          "agency": "Imobiliária Vértice (demo)",
+          "price": 165000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "T02",
+      "title": "Lote amplo para construir",
+      "type": "Terreno",
+      "district": "Centro",
+      "lat": -29.6075,
+      "lng": -52.1939,
+      "area": 360,
+      "front": 12,
+      "depth": 30,
+      "beds": 0,
+      "deal": "Venda",
+      "description": "Exemplo de terreno residencial. Dimensões informadas para demonstração; não correspondem a cadastro real.",
+      "points": [
+        [
+          -29.60763474667625,
+          -52.19396199309209
+        ],
+        [
+          -29.60763474667625,
+          -52.19383800690791
+        ],
+        [
+          -29.607365253323753,
+          -52.19383800690791
+        ],
+        [
+          -29.607365253323753,
+          -52.19396199309209
+        ]
+      ],
+      "offers": [
+        {
+          "agency": "Imobiliária Raízes (demo)",
+          "price": 185000
+        },
+        {
+          "agency": "Imobiliária Vértice (demo)",
+          "price": 195000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "C03",
+      "title": "Casa térrea com pátio",
+      "type": "Casa",
+      "district": "Centro",
+      "lat": -29.6051,
+      "lng": -52.1887,
+      "area": 150,
+      "front": 0,
+      "depth": 0,
+      "beds": 3,
+      "deal": "Venda",
+      "description": "Exemplo de anúncio imobiliário com características ilustrativas.",
+      "points": [],
+      "offers": [
+        {
+          "agency": "Imobiliária Vértice (demo)",
+          "price": 450000
+        },
+        {
+          "agency": "Imobiliária Horizonte (demo)",
+          "price": 465000
+        },
+        {
+          "agency": "Imobiliária Raízes (demo)",
+          "price": 480000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "T04",
+      "title": "Terreno com excelente área",
+      "type": "Terreno",
+      "district": "Santa Tecla",
+      "lat": -29.6145,
+      "lng": -52.1875,
+      "area": 500,
+      "front": 20,
+      "depth": 25,
+      "beds": 0,
+      "deal": "Venda",
+      "description": "Exemplo de terreno residencial. Dimensões informadas para demonstração; não correspondem a cadastro real.",
+      "points": [
+        [
+          -29.614612288896872,
+          -52.18760332899455
+        ],
+        [
+          -29.614612288896872,
+          -52.18739667100545
+        ],
+        [
+          -29.614387711103127,
+          -52.18739667100545
+        ],
+        [
+          -29.614387711103127,
+          -52.18760332899455
+        ]
+      ],
+      "offers": [
+        {
+          "agency": "Imobiliária Horizonte (demo)",
+          "price": 179000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "C05",
+      "title": "Casa contemporânea",
+      "type": "Casa",
+      "district": "Bela Vista",
+      "lat": -29.599,
+      "lng": -52.1968,
+      "area": 192,
+      "front": 0,
+      "depth": 0,
+      "beds": 3,
+      "deal": "Venda",
+      "description": "Exemplo de anúncio imobiliário com características ilustrativas.",
+      "points": [],
+      "offers": [
+        {
+          "agency": "Imobiliária Raízes (demo)",
+          "price": 690000
+        },
+        {
+          "agency": "Imobiliária Vértice (demo)",
+          "price": 710000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "A06",
+      "title": "Apartamento bem localizado",
+      "type": "Apartamento",
+      "district": "Centro",
+      "lat": -29.6068,
+      "lng": -52.1907,
+      "area": 82,
+      "front": 0,
+      "depth": 0,
+      "beds": 2,
+      "deal": "Venda",
+      "description": "Exemplo de anúncio imobiliário com características ilustrativas.",
+      "points": [],
+      "offers": [
+        {
+          "agency": "Imobiliária Vértice (demo)",
+          "price": 315000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "T07",
+      "title": "Lote residencial",
+      "type": "Terreno",
+      "district": "Santa Tecla",
+      "lat": -29.6128,
+      "lng": -52.199,
+      "area": 300,
+      "front": 10,
+      "depth": 30,
+      "beds": 0,
+      "deal": "Venda",
+      "description": "Exemplo de terreno residencial. Dimensões informadas para demonstração; não correspondem a cadastro real.",
+      "points": [
+        [
+          -29.61293474667625,
+          -52.19905166362598
+        ],
+        [
+          -29.61293474667625,
+          -52.198948336374016
+        ],
+        [
+          -29.61266525332375,
+          -52.198948336374016
+        ],
+        [
+          -29.61266525332375,
+          -52.19905166362598
+        ]
+      ],
+      "offers": [
+        {
+          "agency": "Imobiliária Horizonte (demo)",
+          "price": 119000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "C08",
+      "title": "Casa para locação",
+      "type": "Casa",
+      "district": "Centro",
+      "lat": -29.6101,
+      "lng": -52.1898,
+      "area": 110,
+      "front": 0,
+      "depth": 0,
+      "beds": 2,
+      "deal": "Aluguel",
+      "description": "Exemplo de anúncio imobiliário com características ilustrativas.",
+      "points": [],
+      "offers": [
+        {
+          "agency": "Imobiliária Raízes (demo)",
+          "price": 2200
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "T09",
+      "title": "Terreno de frente ampla",
+      "type": "Terreno",
+      "district": "Bela Vista",
+      "lat": -29.6015,
+      "lng": -52.1878,
+      "area": 600,
+      "front": 20,
+      "depth": 30,
+      "beds": 0,
+      "deal": "Venda",
+      "description": "Exemplo de terreno residencial. Dimensões informadas para demonstração; não correspondem a cadastro real.",
+      "points": [
+        [
+          -29.60163474667625,
+          -52.18790331567269
+        ],
+        [
+          -29.60163474667625,
+          -52.187696684327314
+        ],
+        [
+          -29.601365253323753,
+          -52.187696684327314
+        ],
+        [
+          -29.601365253323753,
+          -52.18790331567269
+        ]
+      ],
+      "offers": [
+        {
+          "agency": "Imobiliária Vértice (demo)",
+          "price": 230000
+        },
+        {
+          "agency": "Imobiliária Horizonte (demo)",
+          "price": 245000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "M10",
+      "title": "Área comercial",
+      "type": "Comercial",
+      "district": "Centro",
+      "lat": -29.6042,
+      "lng": -52.195,
+      "area": 260,
+      "front": 0,
+      "depth": 0,
+      "beds": 0,
+      "deal": "Venda",
+      "description": "Exemplo de anúncio imobiliário com características ilustrativas.",
+      "points": [],
+      "offers": [
+        {
+          "agency": "Imobiliária Horizonte (demo)",
+          "price": 580000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "T11",
+      "title": "Lote para seu projeto",
+      "type": "Terreno",
+      "district": "Santa Tecla",
+      "lat": -29.6162,
+      "lng": -52.193,
+      "area": 420,
+      "front": 14,
+      "depth": 30,
+      "beds": 0,
+      "deal": "Venda",
+      "description": "Exemplo de terreno residencial. Dimensões informadas para demonstração; não correspondem a cadastro real.",
+      "points": [
+        [
+          -29.616334746676248,
+          -52.1930723315161
+        ],
+        [
+          -29.616334746676248,
+          -52.1929276684839
+        ],
+        [
+          -29.61606525332375,
+          -52.1929276684839
+        ],
+        [
+          -29.61606525332375,
+          -52.1930723315161
+        ]
+      ],
+      "offers": [
+        {
+          "agency": "Imobiliária Raízes (demo)",
+          "price": 135000
+        },
+        {
+          "agency": "Imobiliária Vértice (demo)",
+          "price": 145000
+        }
+      ],
+      "mine": false
+    },
+    {
+      "id": "C12",
+      "title": "Casa com três dormitórios",
+      "type": "Casa",
+      "district": "Centro",
+      "lat": -29.609,
+      "lng": -52.196,
+      "area": 138,
+      "front": 0,
+      "depth": 0,
+      "beds": 3,
+      "deal": "Venda",
+      "description": "Exemplo de anúncio imobiliário com características ilustrativas.",
+      "points": [],
+      "offers": [
+        {
+          "agency": "Imobiliária Vértice (demo)",
+          "price": 399000
+        }
+      ],
+      "mine": false
+    }
+  ]
+}

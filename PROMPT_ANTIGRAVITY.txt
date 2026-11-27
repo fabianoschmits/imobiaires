@@ -1,0 +1,43 @@
+# IMOBIAIRES — CRIAR A PRIMEIRA VERSÃO REAL A PARTIR DO PROTÓTIPO
+
+Você vai trabalhar no projeto ImobiAires, marketplace imobiliário geolocalizado de Venâncio Aires, RS. O objetivo é criar a primeira base utilizável do site real, simples e bem estruturada, reproduzindo fielmente a versão original que aprovamos. Não faça um redesign e não utilize shadcn/ui. Não adicione recursos que não foram solicitados.
+
+REFERÊNCIA PRINCIPAL
+- Site aprovado: https://imobiaires.vercel.app/ (versão original, não a shadcn).
+- Leia README.md e documentacao/ESPECIFICACAO.md.
+- Execute e inspecione a pasta prototipo/ antes de escrever código. Ela contém a referência local reconstruída e funcional. Compare-a visualmente com a versão hospedada, se acessível, e use a hospedada como referência final se houver diferenças.
+- Use dados/imoveis-demo.json apenas para testes e demonstração, jamais como anúncios reais.
+- Mantenha os arquivos originais de referência intactos; crie o projeto de trabalho em uma pasta separada, por exemplo site/, dentro deste workspace.
+
+OBJETIVO VISUAL (OBRIGATÓRIO)
+- Interface em português do Brasil. Marca imobi + aires, azul-marinho #17243B e azul royal #2563EB; botões #1D4ED8/#2255D4; fundo #F6F8FB; fonte Inter.
+- Ícone azul arredondado com casa dentro de um marcador geográfico. Slogan: Sua cidade. Seu novo endereço.
+- Animação de entrada sutil no nome e slogan, brilho discreto no ícone, sem efeitos exagerados; respeite prefers-reduced-motion.
+- Desktop: cabeçalho e barra de busca/filtros, mapa ocupando a parte esquerda, painel de imóveis à direita (aprox. 425px). Cards com imagem, preço, título, bairro, área, preço/m², número de ofertas, favorito e comparação.
+- Mobile: mapa em tela cheia abaixo do cabeçalho; painel inferior de lista/detalhe que abre quando solicitado, sem inverter a organização para o padrão shadcn. Não criar landing page antes do mapa. Sem menus laterais desnecessários.
+- Marcadores de preço compactos: fundo branco 85% opaco, blur, cantos 7px, sombra leve, sem ponta, sem borda grossa, ativo azul. Polígonos azuis discretos apenas quando disponíveis, no zoom próximo (>=16). Não ocultar atribuições dos mapas.
+
+FUNCIONALIDADES BÁSICAS (APENAS ESTAS)
+1. Mapa real de Venâncio Aires, inicial em satélite, zoom/pan, alternar para ruas, centralizar e ver todos os imóveis filtrados. Usar Leaflet e provedor de mapas autorizado. A referência usa Esri World Imagery e OpenStreetMap para demonstração; não presumir que seu uso comercial é gratuito ou permitido. Verificar termos, atribuição e configuração; preparar variáveis de ambiente para provedor licenciado. Não usar tiles não oficiais do Google, scraping nem derivar limites a partir de imagens protegidas.
+2. Busca por bairro, título, tipo, referência e imobiliária; filtros por tipo, preço min/max, área min/max, bairro, venda/aluguel e apenas imóveis com várias ofertas. Ordenar por relevância, menor/maior preço, menor preço/m² e maior área. Listagem sincronizada com área visível do mapa (toggle).
+3. Detalhe do imóvel ao clicar no marcador ou card: foto, descrição, bairro, tipo, negócio, área, dimensões, quartos quando informados, preço mínimo, R$/m² e ofertas da imobiliária, ordenadas por preço. Mostrar diferença entre maior e menor oferta. Um imóvel pode ter várias ofertas; não duplicar o imóvel para cada imobiliária. Venda e aluguel não devem ser confundidos.
+4. Favoritos, comparação de até 3 imóveis, compartilhamento por link individual. Contato com a imobiliária, simulando quando não houver dados reais; WhatsApp somente quando um número real autorizado estiver disponível.
+5. Central da imobiliária com lista dos próprios cadastros, criação de imóvel e inclusão de oferta em imóvel existente. Campos: título, tipo, negociação, bairro, preço, área, frente, profundidade, quartos, descrição, fotos, localização geográfica e limite opcional. Marcar ponto no mapa e aceitar polígono independente/autorizado. Não deduzir dimensões nem inventar dados. Permitir edição e exclusão dos próprios anúncios com confirmação na versão real. Manter o fluxo básico, sem CRM.
+
+ARQUITETURA E ESCOPO DO SITE REAL
+- Prioridade: reproduzir o protótipo antes de qualquer refatoração. O código de referência é HTML/CSS/JS puro. Use a arquitetura mais simples que preserve o design. Se houver necessidade de reorganizar o código em React/Next.js ou Vite, faça-o somente com paridade visual e funcional, sem shadcn ou substituição de identidade. Não mude de stack apenas por preferência pessoal. Não alterar projetos existentes.
+- Separe interface, mapa, catálogo, regras de filtros/comparação e persistência em módulos claros. Reutilize o CSS, o desenho do logo e os dados de referência. Evite dependências desnecessárias.
+- O protótipo usa localStorage, com dados fictícios. Para o site real, a persistência e as contas de imobiliárias devem usar uma solução mínima compartilhada (preferência: Supabase Auth, Postgres e Storage), mas não invente chaves, não conecte um banco de outro projeto e não execute migrações remotas sem autorização. Se não houver ambiente Supabase dedicado, prepare o modo demo funcional e a integração/migração local mínima como etapa separada, documentando o bloqueio. Use variáveis de ambiente e .env.example sem segredos.
+- Modelo mínimo: agencies, agency_members, properties, offers, property_photos (e favorites se necessário). Um imóvel central com várias ofertas; preço pertence à oferta. Controle o negócio (venda/aluguel) de modo consistente. Dados públicos apenas de anúncios publicados, login para imobiliárias, RLS em todas as tabelas, acesso de escrita apenas aos próprios registros; admin pode moderar/vincular imóveis e cadastrar em nome de imobiliária. Chave de service role nunca no cliente. Não exponha dados pessoais, imagens privadas ou coordenadas precisas sem autorização.
+- Valide entradas no backend, preços positivos, área positiva, tipo e negociação permitidos, coordenadas, formatos e limites de fotos. Defina autorização de storage. Anúncios fictícios claramente identificados e isolados de dados de produção. Sem cobrança, planos, IA, reconhecimento de lotes, scraping, Street View, cadastro oficial da prefeitura, analytics avançado, chat, notificações, PWA, marketplace de serviços ou outras funções extras.
+- Não registre domínio, não contrate serviços pagos, não altere a Vercel original nem publique em produção sem autorização. Prepare o build e uma publicação separada de teste, caso solicitado e com credenciais disponíveis.
+
+VALIDAÇÃO OBRIGATÓRIA
+- Rodar a referência local e o novo projeto. Testar desktop (1280 ou 1440) e celular (390 e 360px), sem overflow horizontal.
+- Conferir mapa, zoom, troca de camada, marcadores, abertura de detalhes, polígonos, filtros, ordenação, favoritos persistentes, comparação de 2/3 imóveis, cadastro, oferta adicional e recuperação de erro.
+- Verificar recarregamento do navegador e link individual; se o backend real estiver configurado, verificar acesso de duas contas diferentes e RLS, persistência compartilhada e uploads.
+- Se usar dependências npm, executar lint, build e testes; corrigir erros reais. Não declarar testes que não rodaram.
+- Não apagar o protótipo de referência. Ao finalizar, informe arquivos criados, comandos para rodar, o que ficou funcional, testes efetivamente executados, bloqueios, e próximos passos mínimos. Se algum serviço externo não estiver acessível, seja explícito.
+
+ENTREGA
+Quero uma primeira versão limpa, fiel, básica e utilizável. Não quero que você invente outra interface. A prioridade é deixar a estrutura sólida e o mesmo resultado visual que já aprovei, para aprimorarmos em etapas futuras.
