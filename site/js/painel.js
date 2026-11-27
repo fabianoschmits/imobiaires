@@ -95,9 +95,10 @@ async function renderDash() {
   $('propGrid').innerHTML = props.map((p) => {
     const offer = p.offers?.[0];
     const price = offer?.price || 0;
-    const imgHtml = p.photo_url
-      ? `<img src="${esc(p.photo_url)}" alt="Foto do imóvel">`
-      : renderIllustration(p);
+    const coverUrl = p.photo_url || (Array.isArray(p.photos) && p.photos[0]) || null;
+    const imgHtml = coverUrl
+      ? `<img src="${esc(coverUrl)}" alt="Foto do imóvel" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.hidden=false)">`
+      : renderIllustration({ ...p, photo_url: null, photos: [] });
     // Admin can edit any property; regular agency can only edit their own
     const canEdit = adminMode || p.created_by === session?.user?.id;
     const agencyLabel = adminMode && offer?.agencies?.name
