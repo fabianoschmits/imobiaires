@@ -430,10 +430,34 @@ document.addEventListener('click', (e) => {
       p.id +
       ' — ' +
       p.title +
-      ', anunciado por ' +
+      ' (' +
+      p.district +
+      ', ' +
+      fmt(p.area) +
+      ' m²), anunciado por ' +
       money(o.price) +
+      (p.deal === 'Aluguel' ? '/mês' : '') +
       '. Poderia me enviar mais informações?';
     $('contactText').textContent = contactMessage;
+    const waMessage = contactMessage + '\n\n— Enviado via ImobiAires: https://imobiaires.vercel.app';
+    const accounts = readStorage('accounts', []);
+    const matchedAcc = accounts.find(
+      (a) => a.name.toLowerCase() === String(o.agency || '').toLowerCase()
+    );
+    const rawPhone = o.phone || matchedAcc?.phone || '';
+    const digits = rawPhone.replace(/\D/g, '');
+    const waBtn = $('sendWhatsApp');
+    if (digits.length >= 10) {
+      const fullPhone = digits.length <= 11 ? '55' + digits : digits;
+      waBtn.href = 'https://wa.me/' + fullPhone + '?text=' + encodeURIComponent(waMessage);
+      waBtn.hidden = false;
+      $('contactNote').textContent = 'WhatsApp cadastrado: ' + rawPhone;
+    } else {
+      waBtn.hidden = true;
+      waBtn.removeAttribute('href');
+      $('contactNote').textContent =
+        'Imobiliária demonstrativa sem WhatsApp cadastrado. Use "Copiar mensagem" para testar.';
+    }
     openDialog('contactDialog');
     return;
   }
@@ -651,6 +675,7 @@ $('propertyForm').onsubmit = (e) => {
     toast('Marque a localização no mapa primeiro');
     return;
   }
+  const session = readStorage('session', null);
   const f = Object.fromEntries(new FormData(e.target));
   const p = {
     id: 'P' + Date.now().toString(36),
@@ -666,7 +691,7 @@ $('propertyForm').onsubmit = (e) => {
     ...draftLocation,
     photo: photoData,
     mine: true,
-    offers: [{ agency: f.agency, price: +f.price }],
+    offers: [{ agency: f.agency, price: +f.price, phone: session?.phone || '' }],
   };
   const next = [...mine, p];
   if (!writeStorage('mine', next, toast)) return;
@@ -679,8 +704,12 @@ $('propertyForm').onsubmit = (e) => {
 };
 $('offerForm').onsubmit = (e) => {
   e.preventDefault();
+  const session = readStorage('session', null);
   const f = Object.fromEntries(new FormData(e.target));
-  const next = [...extra, { id: f.id, agency: f.agency, price: +f.price }];
+  const next = [
+    ...extra,
+    { id: f.id, agency: f.agency, price: +f.price, phone: session?.phone || '' },
+  ];
   if (!writeStorage('offers', next, toast)) return;
   extra = next;
   closeDialog('offerDialog');
