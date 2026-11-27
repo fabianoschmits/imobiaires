@@ -1,4 +1,4 @@
-﻿import { readStorage, writeStorage } from './storage.js';
+﻿import { readStorage, writeStorage, readFavorites, writeFavorites } from './storage.js';
 import {
   money,
   fmt,
@@ -20,7 +20,7 @@ const qa = (s, p = document) => [...p.querySelectorAll(s)];
 
 let mine = readStorage('mine', []);
 let extra = readStorage('offers', []);
-let fav = new Set(readStorage('fav', []));
+let fav = new Set(readFavorites()); // persisted in localStorage with no expiry
 const comp = new Set();
 
 /** Properties loaded from Supabase (replaces BASE_PROPERTIES when available) */
@@ -90,6 +90,8 @@ function hideDetail() {
   $('cards').hidden = false;
   q('.panelhead').hidden = false;
   $('panel').classList.remove('detailopen', 'expanded');
+  const pc = $('panelClose');
+  if (pc) pc.hidden = true;
   render();
 }
 
@@ -291,6 +293,8 @@ function select(id, fly = true) {
   }
   showDetailPanel();
   $('panel').scrollTop = 0;
+  const pc = $('panelClose');
+  if (pc) pc.hidden = false;
   render();
 }
 
@@ -303,9 +307,9 @@ function toggleFav(id) {
   const next = new Set(fav);
   if (next.has(id)) next.delete(id);
   else next.add(id);
-  if (writeStorage('fav', [...next], toast)) {
+  if (writeFavorites([...next], toast)) {
     fav = next;
-    toast(fav.has(id) ? 'Imóvel salvo' : 'Removido dos salvos');
+    toast(fav.has(id) ? '❤ Imóvel salvo' : 'Removido dos salvos');
     refreshDetail();
   }
 }
@@ -506,7 +510,7 @@ document.addEventListener('click', (e) => {
     fav.delete(b.dataset.delete);
     comp.delete(b.dataset.delete);
     writeStorage('offers', extra, toast);
-    writeStorage('fav', [...fav], toast);
+    writeFavorites([...fav], toast);
     hideDetail();
     closeDialog('agencyDialog');
     openAgency();
@@ -539,6 +543,14 @@ document.addEventListener('keydown', (e) => {
 
 $('explore').onclick = () => switchMode('all');
 $('saved').onclick = () => switchMode(mode === 'saved' ? 'all' : 'saved');
+// X button to close the mobile detail sheet
+const panelCloseBtn = $('panelClose');
+if (panelCloseBtn) {
+  panelCloseBtn.onclick = () => {
+    hideDetail();
+    if (isMobile()) setPanel(false);
+  };
+}
 $('compareTop').onclick = compare;
 $('openCompare').onclick = compare;
 $('clearCompare').onclick = () => {

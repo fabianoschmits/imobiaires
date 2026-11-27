@@ -647,17 +647,50 @@ dialog.drawer {
   margin-bottom: 16px;
   gap: 10px;
 }
+/* Discrete X close button — used in all dialogs and the detail sheet */
 .close {
-  background: var(--paper);
+  background: transparent;
   border-radius: 6px;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: grid;
   place-items: center;
   color: var(--muted);
   flex: none;
+  opacity: 0.55;
+  transition: opacity var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
 }
-.close:hover { background: var(--line); color: var(--ink); }
+.close:hover { background: var(--paper); opacity: 1; color: var(--ink); }
+.close .ico { width: 15px; height: 15px; }
+
+/* Discrete X close on mobile detail sheet — sticky floated top-right */
+.panel-close {
+  display: none;
+}
+@media (max-width: 760px) {
+  .panel-close {
+    display: grid;
+    place-items: center;
+    position: sticky;
+    top: 8px;
+    float: right;
+    margin: 10px 12px -38px auto;
+    z-index: 20;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--muted);
+    opacity: 0.75;
+    border: 1px solid rgba(37,54,75,0.09);
+    box-shadow: 0 1px 4px rgba(37,54,75,0.09);
+    transition: opacity var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  }
+  .panel-close:hover, .panel-close:focus-visible { opacity: 1; color: var(--ink); }
+  .panel-close .ico { width: 14px; height: 14px; }
+}
 
 .formgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 dialog label {
