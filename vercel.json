@@ -1,6 +1,12 @@
 {
   "outputDirectory": "site",
   "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/:slug((?!js/|painel|imobiliaria|favicon|index|base\\.css|style\\.css|painel\\.css).*)",
+      "destination": "/imobiliaria.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

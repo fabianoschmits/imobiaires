@@ -26,6 +26,9 @@ export function fromSupabaseRow(row) {
       agency: o.agencies?.name || 'Imobiliária',
       price: o.price || 0,
       phone: o.agencies?.phone || '',
+      logo_url: o.agencies?.logo_url || '',
+      creci: o.agencies?.creci || '',
+      slug: o.agencies?.slug || '',
       agency_id: o.agency_id,
     }))
     .sort((a, b) => a.price - b.price);

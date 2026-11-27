@@ -28,9 +28,16 @@
       <button type="submit" class="primary auth-submit">Entrar</button>
     </form>
     <form id="registerForm" hidden novalidate>
+      <label>Seu nome<input name="owner_name" required maxlength="60" autocomplete="name" placeholder="Ex.: João Silva"></label>
       <label>Nome da imobiliária<input name="name" required maxlength="60" autocomplete="organization" placeholder="Ex.: Imobiliária Centro"></label>
+      <label>CRECI (registro)
+        <input name="creci" maxlength="25" pattern="^(CRECI[\s\-]*[A-Z]{0,2}[\s\-]*)?\d{4,7}(-[FJfj])?$" placeholder="Ex.: CRECI-RS 12345-J" title="Formato válido: 4 a 7 dígitos, ex.: 12345-J ou CRECI-RS 12345">
+      </label>
       <label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="contato@imobiliaria.com"></label>
       <label>WhatsApp (opcional)<input name="phone" type="tel" maxlength="20" autocomplete="tel" placeholder="(51) 99999-9999"></label>
+      <label>Logo da imobiliária (opcional)
+        <input id="regLogoInput" type="file" accept="image/jpeg,image/png,image/webp">
+      </label>
       <label>Senha
         <div class="pw-wrap">
           <input name="password" type="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">

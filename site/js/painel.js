@@ -38,9 +38,11 @@ async function showDash() {
   $('authScreen').hidden = true;
   $('dashScreen').hidden = false;
   adminMode = session?.user?.email === ADMIN_EMAIL;
-  $('sessionName').textContent = adminMode
-    ? '👑 Admin — ' + (myAgency?.name || 'ImobiAires')
-    : (myAgency?.name || session?.user?.email || 'Imobiliária');
+  $('sessionName').innerHTML = (myAgency?.logo_url ? `<img src="${esc(myAgency.logo_url)}" alt="" style="width:24px;height:24px;border-radius:6px;object-fit:cover;vertical-align:middle;margin-right:6px">` : '') +
+    esc(adminMode
+      ? '👑 Admin — ' + (myAgency?.name || 'ImobiAires')
+      : (myAgency?.name || session?.user?.email || 'Imobiliária')) +
+    (myAgency?.slug ? ` <a href="/${esc(myAgency.slug)}" target="_blank" style="font-size:12px;color:#1d4ed8;margin-left:6px;text-decoration:underline">/${esc(myAgency.slug)} ↗</a>` : '');
   // Show admin banner if admin
   let banner = $('adminBanner');
   if (!banner) {
@@ -396,7 +398,18 @@ $('registerForm').onsubmit = async (e) => {
     session = await signUp(f.email.trim(), f.password, f.name.trim(), f.phone?.trim());
     writeStorage('sb-session', session);
     if (session?.access_token) {
-      myAgency = await createAgency(session, { name: f.name, phone: f.phone || '' });
+      let logoUrl = null;
+      const logoFile = $('regLogoInput')?.files?.[0];
+      if (logoFile) {
+        logoUrl = await uploadPhoto(session, logoFile, 'logo').catch(() => null);
+      }
+      myAgency = await createAgency(session, {
+        name: f.name.trim(),
+        owner_name: f.owner_name?.trim() || '',
+        creci: f.creci?.trim().toUpperCase() || '',
+        phone: f.phone?.trim() || '',
+        logo_url: logoUrl,
+      });
     } else {
       showError('Conta criada! Confirme seu e-mail para continuar.');
       btn.disabled = false; btn.textContent = 'Criar conta e entrar';

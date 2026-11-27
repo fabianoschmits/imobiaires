@@ -206,11 +206,18 @@ function select(id, fly = true) {
   const offersHtml = p.offers
     .map((o, i) => {
       const isMine = i === myOfferIdx;
+      const logoImg = o.logo_url
+        ? '<img class="offer-logo" src="' + esc(o.logo_url) + '" alt="' + esc(o.agency) + '">'
+        : '';
+      const agencyTitle = o.slug
+        ? '<a href="/' + esc(o.slug) + '" style="text-decoration:underline;text-underline-offset:2px">' + esc(o.agency) + '</a>'
+        : esc(o.agency);
+      const creciTag = o.creci ? '<small style="margin-left:6px">(' + esc(o.creci) + ')</small>' : '';
       return (
         '<div class="offerrow">' +
         '<div>' +
         '<small>' + (i === 0 ? 'MENOR PREÇO' : 'OFERTA ' + (i + 1)) + '</small>' +
-        '<strong>' + esc(o.agency) + (isMine ? ' · <em style="color:#2255d4;font-style:normal">sua oferta</em>' : '') + '</strong>' +
+        '<strong>' + logoImg + agencyTitle + creciTag + (isMine ? ' · <em style="color:#2255d4;font-style:normal">sua oferta</em>' : '') + '</strong>' +
         (isMine
           ? '<button class="offer-edit-btn" data-edit-offer="' + p.id + '" data-offer-idx="' + i + '" title="Clique para editar seu preço">' + money(o.price) + ' <span style="font-size:12px">✎</span></button>'
           : '<strong style="color:#17634f">' + money(o.price) + '</strong>') +

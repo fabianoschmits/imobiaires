@@ -78,21 +78,25 @@ export async function isAdmin(session) {
 }
 
 /* ─── Agencies ─── */
-export async function createAgency(session, { name, phone }) {
+export async function createAgency(session, { name, owner_name, creci, phone, logo_url }) {
   const slug =
     name
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '') +
-    '-' +
-    Date.now().toString(36);
-  // Insert without 'return=representation' to avoid 406 on conflict
+      .replace(/^-|-$/g, '') || 'imobiliaria';
   const [agency] = await req(
     'POST',
-    '/rest/v1/agencies?select=id,name,slug,phone',
-    { name, slug, phone: phone || '' },
+    '/rest/v1/agencies?select=id,name,slug,phone,owner_name,creci,logo_url',
+    {
+      name,
+      slug,
+      owner_name: owner_name || '',
+      creci: creci || '',
+      phone: phone || '',
+      logo_url: logo_url || null,
+    },
     session
   );
   // Add owner membership
@@ -103,6 +107,25 @@ export async function createAgency(session, { name, phone }) {
     session
   );
   return agency;
+}
+
+export async function fetchAgencyBySlug(slug) {
+  const data = await req(
+    'GET',
+    `/rest/v1/agencies?slug=eq.${encodeURIComponent(slug)}&select=id,name,slug,phone,owner_name,creci,logo_url`,
+    null,
+    null
+  );
+  return data?.[0] || null;
+}
+
+export async function fetchPropertiesByAgency(agencyId) {
+  return req(
+    'GET',
+    `/rest/v1/properties?status=eq.published&select=*,offers!inner(id,price,deal_type,agency_id,agencies(name,phone,logo_url,creci,slug))&offers.agency_id=eq.${agencyId}&order=created_at.desc`,
+    null,
+    null
+  );
 }
 
 export async function getMyAgency(session) {
@@ -122,7 +145,7 @@ export async function fetchProperties() {
   // Fetch published properties with their offers and agency info
   return req(
     'GET',
-    '/rest/v1/properties?status=eq.published&select=*,offers(id,price,deal_type,agency_id,agencies(name,phone))&order=created_at.desc',
+    '/rest/v1/properties?status=eq.published&select=*,offers(id,price,deal_type,agency_id,agencies(name,phone,logo_url,creci,slug))&order=created_at.desc',
     null,
     null
   );

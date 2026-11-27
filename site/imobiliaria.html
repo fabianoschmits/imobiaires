@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1747b5">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Imobiliária — ImobiAires</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/painel.css">
+  <style>
+    .ag-hero{background:#fff;border-bottom:1px solid #e1e7ef;padding:28px 24px}
+    .ag-hero-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+    .ag-logo{width:72px;height:72px;border-radius:16px;object-fit:cover;border:1px solid #e1e7ef;background:#f0f4fb;display:grid;place-items:center;font-size:28px;font-weight:800;color:#1d4ed8;flex-shrink:0}
+    .ag-info h1{margin:0 0 4px;font-size:24px}
+    .ag-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:#65738a;font-weight:600}
+    .ag-card{cursor:pointer;text-decoration:none;color:inherit}
+  </style>
+</head>
+<body class="painel-body">
+  <header class="painel-header">
+    <a href="/" class="brand" aria-label="Voltar ao mapa">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg></span>
+      <span class="brand-copy"><span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span><small>VENÂNCIO AIRES</small></span>
+    </a>
+    <a href="/" class="secondary" style="font-size:13px">← Ver mapa completo</a>
+  </header>
+
+  <section class="ag-hero" id="agHero" hidden>
+    <div class="ag-hero-inner">
+      <div id="agLogoWrap"></div>
+      <div class="ag-info">
+        <div class="eyebrow">IMOBILIÁRIA PARCEIRA</div>
+        <h1 id="agName"></h1>
+        <div class="ag-meta" id="agMeta"></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="painel-main">
+    <div id="agGrid" class="prop-grid"></div>
+    <p id="agEmpty" class="muted" style="text-align:center;padding:48px 0" hidden>
+      Nenhum anúncio encontrado para esta imobiliária.
+    </p>
+  </main>
+
+  <script type="module">
+    import { fetchAgencyBySlug, fetchPropertiesByAgency } from '/js/supabase.js';
+    import { money, fmt, esc, renderIllustration } from '/js/catalog.js';
+
+    const params = new URLSearchParams(location.search);
+    const pathSlug = location.pathname.replace(/^\/+|\/+$/g, '');
+    const slug = params.get('slug') || pathSlug;
+
+    (async () => {
+      if (!slug) { document.getElementById('agEmpty').hidden = false; return; }
+      const agency = await fetchAgencyBySlug(slug).catch(() => null);
+      if (!agency) {
+        document.getElementById('agEmpty').textContent = 'Imobiliária não encontrada.';
+        document.getElementById('agEmpty').hidden = false;
+        return;
+      }
+
+      document.title = `${agency.name} — ImobiAires`;
+      document.getElementById('agHero').hidden = false;
+      document.getElementById('agName').textContent = agency.name;
+
+      const logoWrap = document.getElementById('agLogoWrap');
+      logoWrap.innerHTML = agency.logo_url
+        ? `<img class="ag-logo" src="${esc(agency.logo_url)}" alt="${esc(agency.name)}">`
+        : `<div class="ag-logo">${esc(agency.name.charAt(0).toUpperCase())}</div>`;
+
+      const meta = [];
+      if (agency.creci) meta.push(`<span>🪪 ${esc(agency.creci)}</span>`);
+      if (agency.phone) meta.push(`<span>📱 ${esc(agency.phone)}</span>`);
+      document.getElementById('agMeta').innerHTML = meta.join('');
+
+      const props = await fetchPropertiesByAgency(agency.id).catch(() => []);
+      if (!props.length) {
+        document.getElementById('agEmpty').hidden = false;
+        return;
+      }
+
+      document.getElementById('agGrid').innerHTML = props.map((p) => {
+        const offer = p.offers?.[0];
+        const price = offer?.price || 0;
+        const imgHtml = p.photo_url ? `<img src="${esc(p.photo_url)}" alt="Foto do imóvel">` : renderIllustration(p);
+        return `
+          <a class="prop-card ag-card" href="/?imovel=${encodeURIComponent(p.id)}">
+            <div class="prop-card-img">
+              ${imgHtml}
+              <span class="prop-card-tag">${esc(p.type)} · ${esc(p.deal)}</span>
+            </div>
+            <div class="prop-card-body">
+              <p class="prop-card-title">${esc(p.title)}</p>
+              <div class="prop-card-loc">⌖ ${esc(p.district)} · Venâncio Aires</div>
+              <div class="prop-card-price">${money(price)}${p.deal === 'Aluguel' ? '<small style="font-size:13px">/mês</small>' : ''}</div>
+              <div class="prop-card-meta">
+                <span>▱ ${fmt(p.area)} m²</span>
+                ${p.beds ? `<span>${p.beds} quartos</span>` : ''}
+              </div>
+            </div>
+          </a>`;
+      }).join('');
+    })();
+  </script>
+</body>
+</html>
