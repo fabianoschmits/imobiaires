@@ -54,9 +54,14 @@ function reload() {
 function getMyProps() {
   if (!session) return [];
   const name = session.name.toLowerCase();
+  // Only properties that this agency created AND has an offer on
   return mine.filter(
     (p) => p.mine && p.offers.some((o) => o.agency.toLowerCase() === name)
   );
+}
+
+function isMyProp(id) {
+  return getMyProps().some((p) => p.id === id);
 }
 
 function getMyOffers(propId) {
@@ -308,6 +313,7 @@ function openNewProp() {
 
 function openEditProp(id) {
   reload();
+  if (!isMyProp(id)) { toast('Você não tem permissão para editar este imóvel.'); return; }
   const p = mine.find((x) => x.id === id);
   if (!p) return;
   editingId = id;
@@ -356,6 +362,7 @@ $('propForm').onsubmit = (e) => {
   reload();
 
   if (editingId) {
+    if (!isMyProp(editingId)) { toast('Sem permissão para editar este imóvel.'); return; }
     mine = mine.map((p) => {
       if (p.id !== editingId) return p;
       return {
@@ -418,6 +425,8 @@ document.addEventListener('click', (e) => {
   if (b.id === 'cancelPropBtn') { closeDialog('propDialog'); return; }
   if (b.dataset.edit) { openEditProp(b.dataset.edit); return; }
   if (b.dataset.delete) {
+    reload();
+    if (!isMyProp(b.dataset.delete)) { toast('Você não tem permissão para excluir este imóvel.'); return; }
     if (!confirm('Excluir este imóvel permanentemente?')) return;
     reload();
     mine = mine.filter((p) => p.id !== b.dataset.delete);
@@ -482,3 +491,4 @@ if (session) {
 } else {
   showAuth();
 }
+
