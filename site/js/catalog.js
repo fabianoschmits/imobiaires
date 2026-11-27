@@ -1,4 +1,5 @@
 import { BASE_PROPERTIES } from './config.js';
+import { icon } from './icons.js';
 
 export const money = (n) =>
   Number(n).toLocaleString('pt-BR', {
@@ -138,23 +139,31 @@ export function sortAndBoundProperties(filtered, { map, withinBounds, sort }) {
 
 export function renderIllustration(p) {
   if (p.photo_url) {
-    return '<img src="' + esc(p.photo_url) + '" alt="Foto do imóvel">';
+    return (
+      '<img src="' +
+      esc(p.photo_url) +
+      '" alt="' +
+      esc(p.title || 'Foto do imóvel') +
+      '" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.hidden=false">' +
+      '<div class="illustration" hidden>' +
+      icon(p.type === 'Terreno' ? 'land' : p.type === 'Apartamento' ? 'apartment' : p.type === 'Comercial' ? 'commercial' : 'house') +
+      '<span>Foto não cadastrada</span></div>'
+    );
   }
   if (p.photo && /^data:image\/(jpeg|png|webp);base64,/.test(p.photo)) {
-    return '<img src="' + esc(p.photo) + '" alt="Foto enviada na demonstração">';
+    return '<img src="' + esc(p.photo) + '" alt="Foto do imóvel" loading="lazy">';
   }
-  const land = p.type === 'Terreno';
+  const typeIcon =
+    p.type === 'Terreno'
+      ? 'land'
+      : p.type === 'Apartamento'
+        ? 'apartment'
+        : p.type === 'Comercial'
+          ? 'commercial'
+          : 'house';
   return (
-    '<div class="illustration"><svg viewBox="0 0 420 150" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Ilustração de imóvel"><defs><linearGradient id="sky' +
-    esc(p.id) +
-    '" x2="0" y2="1"><stop stop-color="#d9e9e9"/><stop offset="1" stop-color="#edf3e8"/></linearGradient></defs><rect width="420" height="150" fill="url(#sky' +
-    esc(p.id) +
-    ')"/><path d="M0 77 75 45 140 76 215 40 310 72 420 42V150H0" fill="#8aa78f"/><path d="M0 96 115 70 214 100 320 69 420 97V150H0" fill="#6f9475"/><path d="M0 123 420 115V150H0" fill="#b8c4ae"/>' +
-    (land
-      ? '<path d="m126 83 130-8 64 44-180 6Z" fill="#a1cda0" stroke="#edf7db" stroke-width="2" stroke-dasharray="6 4"/><path d="m126 83 130-8 64 44-180 6Z" fill="none" stroke="#26765a" stroke-width="2"/><text x="218" y="108" text-anchor="middle" fill="#174c40" font-size="13" font-weight="bold">' +
-        fmt(p.area) +
-        ' m²</text>'
-      : '<path d="M123 75 210 33 302 75V122H123Z" fill="#ece9df"/><path d="m108 77 101-51 108 51-11 9-97-46-92 46Z" fill="#405e52"/><rect x="145" y="84" width="40" height="30" fill="#789c9e"/><rect x="235" y="83" width="43" height="39" fill="#597367"/><path d="M195 78h24v44h-24" fill="#9f8065"/>') +
-    '<circle cx="63" cy="90" r="18" fill="#527b61"/><path d="M63 99v24" stroke="#52665a" stroke-width="4"/><circle cx="356" cy="86" r="21" fill="#547a60"/><path d="M356 100v23" stroke="#52665a" stroke-width="4"/></svg></div>'
+    '<div class="illustration">' +
+    icon(typeIcon) +
+    '<span>Foto não cadastrada</span></div>'
   );
 }

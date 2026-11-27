@@ -1,16 +1,239 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#1747b5"><meta name="robots" content="noindex,nofollow"><title>ImobiAires — Sua cidade. Seu novo endereço.</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"></head>
-<body><header><a class="brand" href="/" aria-label="ImobiAires — página inicial"><span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg></span><span class="brand-copy"><span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span><small>SUA CIDADE. SEU NOVO ENDEREÇO.</small></span></a><nav><button id="explore" class="nav active">Explorar</button><button id="saved" class="nav">♡ Salvos <span id="savedCount"></span></button><button id="compareTop" class="nav">Comparar <span id="compareCount"></span></button></nav><button class="primary" id="agency">Área da imobiliária <span>↗</span></button></header>
-<section class="toolbar"><div class="search"><span>⌕</span><input id="search" placeholder="Busque por bairro, imóvel ou referência" aria-label="Buscar imóveis" autocomplete="off"><button id="clearSearch" aria-label="Limpar busca">×</button><div id="searchSuggest" class="search-suggest" hidden></div></div><div class="chips" id="types"><button data-type="Todos" class="chip active">Todos</button><button data-type="Terreno" class="chip">▱ Terrenos</button><button data-type="Casa" class="chip">⌂ Casas</button><button data-type="Apartamento" class="chip">▥ Apartamentos</button><button data-type="Comercial" class="chip">▣ Comercial</button></div><button class="chip filter" id="filters">☷ Filtros <span id="filterCount"></span></button><button class="chip mobileToggle" id="mobileToggle">☰ Lista</button></section>
-<main><section class="mapwrap" aria-label="Mapa de imóveis"><div id="map"></div><div class="maptop"><div class="location"><span class="dot"></span><div><strong>Venâncio Aires</strong><small>Rio Grande do Sul · Brasil</small></div><button id="center" title="Centralizar cidade">◎</button></div><div class="demo">DEMONSTRAÇÃO · imóveis fictícios</div></div><div class="maptools"><button id="sat" class="selected">▧ Satélite</button><button id="street">▤ Mapa</button><button id="showAll">⌖ Ver todos</button></div><div id="drawBar" class="drawbar" hidden><strong id="drawHint">Marque uma localização no mapa</strong><button id="undoPoint">Desfazer</button><button id="finishDraw" class="primary">Concluir</button><button id="cancelDraw">Cancelar</button></div><div class="maplegend"><span class="dot"></span> Imóveis demonstrativos <span class="line"></span> Limites ilustrativos</div><div id="mapError" hidden class="maperror">O mapa não carregou. Confira sua conexão ou troque para Mapa.</div></section>
-<aside id="panel" class="panel"><div id="panelHandle" class="panel-handle" aria-hidden="true"><span></span></div><div class="panelhead"><div class="eyebrow"><span class="dot"></span> EXPLORE O MERCADO LOCAL</div><h1 id="heading">Encontre seu próximo endereço.</h1><p id="subheading">Explore o mapa e compare as melhores oportunidades.</p><div class="resultrow"><strong id="count">0 imóveis</strong><select id="sort" aria-label="Ordenar"><option value="recommended">Relevância</option><option value="low">Menor preço</option><option value="high">Maior preço</option><option value="sqm">Menor R$/m²</option><option value="area">Maior área</option></select></div><label class="visible"><input id="within" type="checkbox" checked> Buscar somente na área visível do mapa</label></div><div id="cards"></div><div id="detail" hidden></div><footer>ImobiAires · Protótipo independente<br>Os anúncios, fotos e limites de exemplo são ilustrativos.</footer></aside></main>
-<div id="compareDock" hidden class="dock"><span id="dockText"></span><button id="openCompare" class="primary">Comparar agora</button><button id="clearCompare" aria-label="Limpar comparação">×</button></div>
-<dialog id="filterDialog"><form id="filterForm"><div class="modalhead"><div><div class="eyebrow">PERSONALIZE SUA BUSCA</div><h2>Filtros</h2></div><button type="button" class="close" data-close="filterDialog">×</button></div><div class="formgrid"><label>Preço mínimo (R$)<input type="number" min="0" id="minPrice" placeholder="0"></label><label>Preço máximo (R$)<input type="number" min="0" id="maxPrice" placeholder="Sem limite"></label><label>Área mínima (m²)<input type="number" min="0" id="minArea" placeholder="0"></label><label>Área máxima (m²)<input type="number" min="0" id="maxArea" placeholder="Sem limite"></label><label>Bairro<select id="bairro"><option value="">Todos</option></select></label><label>Negociação<select id="negocio"><option value="">Todas</option><option>Venda</option><option>Aluguel</option></select></label></div><label class="check"><input id="multiOffer" type="checkbox"> Somente imóveis com mais de uma oferta</label><div class="modalfoot"><button type="button" id="resetFilter" class="secondary">Limpar filtros</button><button class="primary">Aplicar filtros</button></div></form></dialog>
-<dialog id="agencyAuthDialog"><div class="modalhead"><div><div class="eyebrow">IMOBIAIRES BUSINESS</div><h2>Área da imobiliária</h2><p>Entre ou crie sua conta demonstrativa (salva no navegador)</p></div><button type="button" class="close" data-close="agencyAuthDialog">×</button></div><div class="chips" style="margin-bottom:14px"><button type="button" id="authTabLogin" class="chip active">Entrar</button><button type="button" id="authTabRegister" class="chip">Criar conta</button></div><form id="loginForm"><label>E-mail<input name="email" type="email" required placeholder="contato@imobiliaria.com"></label><label>Senha<input name="password" type="password" required minlength="4" placeholder="••••••"></label><div class="modalfoot"><button class="primary">Entrar</button></div></form><form id="registerForm" hidden><label>Nome da imobiliária<input name="name" required maxlength="60" placeholder="Ex.: Imobiliária Centro"></label><label>E-mail<input name="email" type="email" required placeholder="contato@imobiliaria.com"></label><label>WhatsApp (opcional)<input name="phone" maxlength="20" placeholder="(51) 99999-9999"></label><label>Senha<input name="password" type="password" required minlength="4" placeholder="Mínimo 4 caracteres"></label><div class="modalfoot"><button class="primary">Criar conta e entrar</button></div></form></dialog>
-<dialog id="agencyDialog" class="wide"><div class="modalhead"><div><div class="eyebrow">IMOBIAIRES BUSINESS</div><h2>Central da imobiliária</h2><p id="agencySessionInfo">Ambiente de demonstração · salvo no navegador</p></div><div style="display:flex;gap:8px;align-items:center"><button type="button" id="agencyLogout" class="secondary">Sair</button><button class="close" data-close="agencyDialog">×</button></div></div><div class="stats"><div><small>Imóveis cadastrados por você</small><strong id="mineCount">0</strong></div><div><small>Ofertas adicionadas</small><strong id="offerCount">0</strong></div><div><small>Armazenamento</small><strong>Local</strong></div></div><div class="agencyActions"><button id="newProperty" class="primary">＋ Cadastrar novo imóvel</button><button id="newOffer" class="secondary">＋ Oferta em imóvel existente</button></div><h3>Seus cadastros neste dispositivo</h3><div id="mineList"></div><p class="muted">Os dados ficam neste navegador. Não envie dados pessoais, documentos ou informações reais neste protótipo.</p></dialog>
-<dialog id="propertyDialog" class="wide"><form id="propertyForm"><div class="modalhead"><div><div class="eyebrow">NOVO ANÚNCIO</div><h2>Cadastrar imóvel</h2><p>Dados informados pela imobiliária</p></div><button type="button" class="close" data-close="propertyDialog">×</button></div><div class="formgrid"><label>Título<input name="title" required maxlength="90" placeholder="Ex.: Terreno residencial"></label><label>Imobiliária (nome fictício)<input name="agency" required maxlength="60" placeholder="Imobiliária Demo"></label><label>Tipo<select name="type"><option>Terreno</option><option>Casa</option><option>Apartamento</option><option>Comercial</option></select></label><label>Negociação<select name="deal"><option>Venda</option><option>Aluguel</option></select></label><label>Bairro<input name="district" required maxlength="60"></label><label>Preço (R$)<input name="price" type="number" required min="1" max="1000000000"></label><label>Área do imóvel (m²)<input name="area" type="number" required min="1" max="10000000" step=".01"></label><label>Frente (m)<input name="front" type="number" min="0" step=".01"></label><label>Fundos / profundidade (m)<input name="depth" type="number" min="0" step=".01"></label><label>Quartos (se aplicável)<input name="beds" type="number" min="0" max="100"></label></div><label>Descrição<textarea name="description" maxlength="600" rows="3" placeholder="Características do imóvel"></textarea></label><label>Foto ilustrativa (opcional, até 2 MB)<input id="photo" type="file" accept="image/jpeg,image/png,image/webp"></label><div class="modalfoot"><button type="button" class="secondary" id="pickLocation">⌖ Marcar no mapa</button><span id="locationStatus" class="muted">Localização pendente</span><button class="primary">Salvar demonstração</button></div><p class="muted">Use localização e medidas próprias/autorizadas; não copie limites da imagem de satélite.</p></form></dialog>
-<dialog id="offerDialog"><form id="offerForm"><div class="modalhead"><div><div class="eyebrow">COMPARADOR DE OFERTAS</div><h2>Adicionar oferta</h2></div><button type="button" class="close" data-close="offerDialog">×</button></div><label>Imóvel<select id="offerProperty" name="id" required></select></label><label>Imobiliária fictícia<input name="agency" required maxlength="60"></label><label>Preço (R$)<input name="price" type="number" min="1" max="1000000000" required></label><div class="modalfoot"><button class="primary">Adicionar oferta</button></div></form></dialog>
-<dialog id="compareDialog" class="wide"><div class="modalhead"><div><div class="eyebrow">DECIDA COM MAIS CLAREZA</div><h2>Comparar imóveis</h2></div><button class="close" data-close="compareDialog">×</button></div><div id="compareTable"></div></dialog>
-<dialog id="contactDialog"><div class="modalhead"><div><div class="eyebrow">CONTATO</div><h2>Fale com a imobiliária</h2></div><button class="close" data-close="contactDialog">×</button></div><p id="contactText"></p><p id="contactNote" class="muted">Nesta demonstração, o WhatsApp abre quando a imobiliária informou um número no cadastro.</p><div class="modalfoot"><a id="sendWhatsApp" class="primary" target="_blank" rel="noopener noreferrer" hidden>Enviar mensagem no WhatsApp ↗</a></div></dialog><div id="toast" role="status"></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script type="module" src="/js/main.js"></script></body></html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#244D85">
+  <meta name="robots" content="noindex,nofollow">
+  <title>ImobiAires — Venâncio Aires · RS</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="/" aria-label="ImobiAires — página inicial">
+    <span class="logo" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/>
+        <path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/>
+      </svg>
+    </span>
+    <span class="brand-copy">
+      <span class="brand-main">
+        <span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span>
+      </span>
+      <small>VENÂNCIO AIRES · RS</small>
+    </span>
+  </a>
 
+  <nav aria-label="Navegação principal">
+    <button id="explore" class="nav active" type="button">Explorar</button>
+    <button id="saved" class="nav" type="button" aria-label="Imóveis salvos">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.8-9-9.5C1.8 7.2 4.5 4 8 4c2 0 3.4 1.1 4 2.3C12.6 5.1 14 4 16 4c3.5 0 6.2 3.2 5 7-1.5 4.7-9 9.5-9 9.5z"/></svg>
+      <span>Salvos</span>
+      <span id="savedCount"></span>
+    </button>
+    <button id="compareTop" class="nav" type="button" aria-label="Comparar imóveis">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17V7m0 0L4 10m3-3l3 3"/><path d="M17 7v10m0 0l-3-3m3 3l3-3"/></svg>
+      <span>Comparar</span>
+      <span id="compareCount"></span>
+    </button>
+  </nav>
+
+  <button class="primary" id="agency" type="button" aria-label="Área da imobiliária">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/></svg>
+    <span class="btn-label">Área da imobiliária</span>
+  </button>
+</header>
+
+<section class="toolbar" aria-label="Pesquisa e categorias">
+  <div class="search">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="search" placeholder="Busque por bairro, imóvel, referência ou imobiliária" aria-label="Buscar imóveis" autocomplete="off">
+    <button id="clearSearch" type="button" aria-label="Limpar busca">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div id="searchSuggest" class="search-suggest" hidden></div>
+  </div>
+
+  <div class="chips" id="types" role="group" aria-label="Categorias de imóveis">
+    <button data-type="Todos" type="button" class="chip active">Todos</button>
+    <button data-type="Terreno" type="button" class="chip">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-9 6 4 7-6"/><path d="M3 20h18"/></svg>
+      Terrenos
+    </button>
+    <button data-type="Casa" type="button" class="chip">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>
+      Casas
+    </button>
+    <button data-type="Apartamento" type="button" class="chip">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7h2m2 0h2M9 11h2m2 0h2M9 15h2m2 0h2"/></svg>
+      Apartamentos
+    </button>
+    <button data-type="Comercial" type="button" class="chip">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M4 20V8l8-4 8 4v12"/></svg>
+      Comercial
+    </button>
+  </div>
+
+  <button class="chip filter" id="filters" type="button">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+    Filtros <span id="filterCount"></span>
+  </button>
+
+  <button class="chip mobileToggle" id="mobileToggle" type="button">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    Lista
+  </button>
+</section>
+
+<main>
+  <section class="mapwrap" aria-label="Mapa de imóveis">
+    <div id="map"></div>
+    <div class="maptop">
+      <div class="location">
+        <span class="dot"></span>
+        <div>
+          <strong>Venâncio Aires</strong>
+          <small>Rio Grande do Sul · Brasil</small>
+        </div>
+        <button id="center" type="button" title="Centralizar cidade" aria-label="Centralizar cidade">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="8"/></svg>
+        </button>
+      </div>
+      <div id="demoBadge" class="demo" hidden>Anúncios demonstrativos</div>
+    </div>
+
+    <div class="maptools">
+      <button id="sat" type="button" class="selected">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        Satélite
+      </button>
+      <button id="street" type="button">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6z"/><path d="M9 4v14M15 6v14"/></svg>
+        Ruas
+      </button>
+      <button id="showAll" type="button">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+        Ver todos
+      </button>
+    </div>
+
+    <div id="drawBar" class="drawbar" hidden>
+      <strong id="drawHint">Marque uma localização no mapa</strong>
+      <button id="undoPoint" type="button" class="secondary">Desfazer</button>
+      <button id="finishDraw" type="button" class="primary">Concluir</button>
+      <button id="cancelDraw" type="button" class="secondary">Cancelar</button>
+    </div>
+
+    <div class="maplegend">
+      <span class="dot"></span> Imóveis
+      <span class="line"></span> Limites
+    </div>
+
+    <div id="mapError" hidden class="maperror">O mapa não carregou. Confira sua conexão ou troque para Ruas.</div>
+  </section>
+
+  <aside id="panel" class="panel" aria-label="Lista de imóveis">
+    <div id="panelHandle" class="panel-handle" aria-hidden="true"><span></span></div>
+    <div class="panelhead">
+      <div class="eyebrow"><span class="dot"></span> Mercado local</div>
+      <h1 id="heading">Encontre seu próximo endereço.</h1>
+      <p id="subheading">Explore o mapa e compare as melhores oportunidades.</p>
+      <div class="resultrow">
+        <strong id="count">0 imóveis</strong>
+        <select id="sort" aria-label="Ordenar imóveis">
+          <option value="recommended">Relevância</option>
+          <option value="low">Menor preço</option>
+          <option value="high">Maior preço</option>
+          <option value="sqm">Menor R$/m²</option>
+          <option value="area">Maior área</option>
+        </select>
+      </div>
+      <label class="visible">
+        <input id="within" type="checkbox" checked> Buscar somente na área visível do mapa
+      </label>
+    </div>
+    <div id="cards"></div>
+    <div id="detail" hidden></div>
+    <footer>ImobiAires · Venâncio Aires, RS</footer>
+  </aside>
+</main>
+
+<div id="compareDock" hidden class="dock">
+  <span id="dockText"></span>
+  <button id="openCompare" type="button" class="primary">Comparar agora</button>
+  <button id="clearCompare" type="button" aria-label="Limpar comparação">
+    <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+</div>
+
+<dialog id="filterDialog" class="drawer" aria-labelledby="filterTitle">
+  <form id="filterForm">
+    <div class="modalhead">
+      <div>
+        <div class="eyebrow">Personalize sua busca</div>
+        <h2 id="filterTitle">Filtros</h2>
+      </div>
+      <button type="button" class="close" data-close="filterDialog" aria-label="Fechar filtros">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="formgrid">
+      <label>Preço mínimo (R$)<input type="number" min="0" id="minPrice" placeholder="0"></label>
+      <label>Preço máximo (R$)<input type="number" min="0" id="maxPrice" placeholder="Sem limite"></label>
+      <label>Área mínima (m²)<input type="number" min="0" id="minArea" placeholder="0"></label>
+      <label>Área máxima (m²)<input type="number" min="0" id="maxArea" placeholder="Sem limite"></label>
+      <label>Bairro<select id="bairro"><option value="">Todos</option></select></label>
+      <label>Negociação<select id="negocio"><option value="">Todas</option><option>Venda</option><option>Aluguel</option></select></label>
+    </div>
+    <label class="check"><input id="multiOffer" type="checkbox"> Somente imóveis com mais de uma oferta</label>
+    <div class="modalfoot">
+      <button type="button" id="resetFilter" class="secondary">Limpar filtros</button>
+      <button type="submit" class="primary">Aplicar filtros</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="compareDialog" class="wide">
+  <div class="modalhead">
+    <div>
+      <div class="eyebrow">Comparativo</div>
+      <h2>Comparar imóveis</h2>
+    </div>
+    <button type="button" class="close" data-close="compareDialog" aria-label="Fechar comparativo">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div id="compareTable"></div>
+</dialog>
+
+<dialog id="contactDialog">
+  <div class="modalhead">
+    <div>
+      <div class="eyebrow">Contato</div>
+      <h2>Fale com a imobiliária</h2>
+    </div>
+    <button type="button" class="close" data-close="contactDialog" aria-label="Fechar contato">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <p id="contactText"></p>
+  <p id="contactNote" class="muted"></p>
+  <div class="modalfoot">
+    <a id="sendWhatsApp" class="primary" target="_blank" rel="noopener noreferrer" hidden>
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20l1.1-4.3A8.5 8.5 0 1 1 20 11.5z"/></svg>
+      Enviar mensagem no WhatsApp
+    </a>
+  </div>
+</dialog>
+
+<div id="toast" role="status"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

@@ -12,6 +12,7 @@ import {
 } from './catalog.js';
 import { createMapController } from './map.js';
 import { fetchProperties } from './supabase.js';
+import { icon } from './icons.js';
 
 const $ = (s) => document.getElementById(s);
 const q = (s, p = document) => p.querySelector(s);
@@ -73,7 +74,9 @@ function isMobile() {
 
 function setPanel(v) {
   $('panel').classList.toggle('open', v);
-  $('mobileToggle').textContent = v ? '⌖ Mapa' : '☰ Lista';
+  $('mobileToggle').innerHTML = v
+    ? icon('map') + ' Mapa'
+    : icon('list') + ' Lista';
 }
 
 function showDetailPanel() {
@@ -141,28 +144,24 @@ function render() {
             esc(p.title) +
             '">' +
             renderIllustration(p) +
-            '<span class="tag">' +
-            esc(p.type) +
-            ' · ' +
-            esc(p.deal) +
-            '</span><button class="heart ' +
+            '<button type="button" class="heart ' +
             (fav.has(p.id) ? 'on' : '') +
             '" data-fav="' +
             p.id +
             '" aria-label="Salvar imóvel">' +
-            (fav.has(p.id) ? '♥' : '♡') +
-            '</button><span class="photoLabel">' +
-            (p.photo ? 'Foto enviada' : 'Ilustração') +
-            '</span></div><div class="cardbody"><div class="price">' +
+            icon(fav.has(p.id) ? 'heartFilled' : 'heart') +
+            '</button></div><div class="cardbody"><div class="price">' +
             money(getMinPrice(p)) +
-            (p.deal === 'Aluguel' ? '<small style="font-size:12px">/mês</small>' : '') +
+            (p.deal === 'Aluguel' ? '<small>/mês</small>' : '') +
             '</div><h3 data-open="' +
             p.id +
             '" tabindex="0" role="button">' +
             esc(p.title) +
-            '</h3><div class="loc">⌖ ' +
+            '</h3><div class="loc">' +
+            icon('pin') +
+            '<span>' +
             esc(p.district) +
-            ' · Venâncio Aires</div><div class="facts"><span>▱ ' +
+            ' · Venâncio Aires</span></div><div class="facts"><span>' +
             fmt(p.area) +
             ' m²</span>' +
             (p.front ? '<span>' + fmt(p.front) + ' × ' + fmt(p.depth) + ' m</span>' : '') +
@@ -173,18 +172,17 @@ function render() {
             p.offers.length +
             ' ' +
             (p.offers.length === 1 ? 'oferta' : 'ofertas') +
-            ' · ' +
-            (p.mine ? 'Seu anúncio' : 'Demo') +
-            '</span><button class="comparebtn ' +
+            (p.is_demo ? ' · Demo' : '') +
+            '</span><button type="button" class="comparebtn ' +
             (comp.has(p.id) ? 'on' : '') +
             '" data-comp="' +
             p.id +
             '">' +
-            (comp.has(p.id) ? '✓ Comparando' : '＋ Comparar') +
+            (comp.has(p.id) ? icon('check') + ' Comparando' : icon('plus') + ' Comparar') +
             '</button></div></div></article>'
         )
         .join('')
-    : '<div class="empty"><strong>Nenhum imóvel encontrado</strong><p>Experimente limpar os filtros ou ampliar a área do mapa.</p><button class="secondary" id="emptyReset">Limpar busca</button></div>';
+    : '<div class="empty"><strong>Nenhum imóvel encontrado</strong><p>Experimente limpar os filtros ou ampliar a área do mapa.</p><button type="button" class="secondary" id="emptyReset">Limpar busca</button></div>';
 
   mapCtrl.renderMarkers(filtered, active);
 }
@@ -216,15 +214,15 @@ function select(id, fly = true) {
       return (
         '<div class="offerrow">' +
         '<div>' +
-        '<small>' + (i === 0 ? 'MENOR PREÇO' : 'OFERTA ' + (i + 1)) + '</small>' +
-        '<strong>' + logoImg + agencyTitle + creciTag + (isMine ? ' · <em style="color:#2255d4;font-style:normal">sua oferta</em>' : '') + '</strong>' +
+        (i === 0 ? '<span class="offer-badge">Menor oferta</span>' : '<small>Oferta ' + (i + 1) + '</small>') +
+        '<strong>' + logoImg + agencyTitle + creciTag + (isMine ? ' · <em style="color:var(--blue);font-style:normal">sua oferta</em>' : '') + '</strong>' +
         (isMine
-          ? '<button class="offer-edit-btn" data-edit-offer="' + p.id + '" data-offer-idx="' + i + '" title="Clique para editar seu preço">' + money(o.price) + ' <span style="font-size:12px">✎</span></button>'
-          : '<strong style="color:#17634f">' + money(o.price) + '</strong>') +
+          ? '<button type="button" class="offer-edit-btn" data-edit-offer="' + p.id + '" data-offer-idx="' + i + '" title="Clique para editar seu preço">' + money(o.price) + ' ' + icon('edit') + '</button>'
+          : '<span class="offer-price">' + money(o.price) + '</span>') +
         '</div>' +
         (isMine
-          ? '<span class="muted" style="font-size:11px;align-self:center">Clique no valor para editar</span>'
-          : '<button class="primary" data-contact="' + i + '">Contato ↗</button>') +
+          ? '<span class="muted">Clique no valor para editar</span>'
+          : '<button type="button" class="primary" data-contact="' + i + '">Contato ' + icon('arrowUpRight') + '</button>') +
         '</div>'
       );
     })
@@ -238,43 +236,40 @@ function select(id, fly = true) {
   let photoIdx = 0;
 
   const heroMediaHtml = photos.length > 0
-    ? '<img id="heroSlideImg" src="' + esc(photos[0]) + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;display:block">'
+    ? '<img id="heroSlideImg" src="' + esc(photos[0]) + '" alt="' + esc(p.title) + '">'
     : renderIllustration(p);
 
   const carouselControls = photos.length > 1
-    ? '<button type="button" class="hero-nav hero-prev" id="heroPrev" aria-label="Foto anterior">‹</button>' +
-      '<button type="button" class="hero-nav hero-next" id="heroNext" aria-label="Próxima foto">›</button>' +
+    ? '<button type="button" class="hero-nav hero-prev" id="heroPrev" aria-label="Foto anterior">' + icon('chevronLeft') + '</button>' +
+      '<button type="button" class="hero-nav hero-next" id="heroNext" aria-label="Próxima foto">' + icon('chevronRight') + '</button>' +
       '<span class="hero-count" id="heroCount">1 / ' + photos.length + '</span>'
     : '';
 
   $('detail').innerHTML =
-    '<div class="detailbody"><button class="back" id="backList">← Voltar aos resultados</button><div class="heroimg">' +
+    '<div class="detailbody"><button type="button" class="back" id="backList">' + icon('back') + ' Voltar aos resultados</button><div class="heroimg">' +
     heroMediaHtml +
     carouselControls +
     '<span class="tag">' + esc(p.type) + ' · ' + esc(p.deal) + '</span>' +
-    (photos.length ? '' : '<span class="photoLabel">Imagem demonstrativa</span>') +
-    '</div><div class="eyebrow" style="margin-top:14px">REFERÊNCIA ' +
-    esc(p.id) + ' · DEMONSTRAÇÃO</div><h2 class="detailtitle">' + esc(p.title) + '</h2><div class="loc">⌖ ' +
-    esc(p.district) + ' · Venâncio Aires, RS</div><div style="margin-top:12px" class="muted">' +
+    '</div><div class="eyebrow" style="margin-top:14px">Ref. ' +
+    esc(p.id) + (p.is_demo ? ' · Demonstrativo' : '') + '</div><h2 class="detailtitle">' + esc(p.title) + '</h2><div class="loc">' + icon('pin') + '<span>' +
+    esc(p.district) + ' · Venâncio Aires, RS</span></div><div style="margin-top:12px" class="muted">' +
     (p.offers.length > 1 ? 'A partir de' : 'Preço anunciado') +
-    '</div><div class="price detailprice">' + money(getMinPrice(p)) + (p.deal === 'Aluguel' ? '/mês' : '') +
-    '</div><div class="statstrip"><div><small>Área informada</small><strong>' + fmt(p.area) + ' m²</strong></div><div><small>Valor por m²</small><strong>' +
+    '</div><div class="price detailprice">' + money(getMinPrice(p)) + (p.deal === 'Aluguel' ? '<small>/mês</small>' : '') +
+    '</div><div class="statstrip"><div><small>Área</small><strong>' + fmt(p.area) + ' m²</strong></div><div><small>Valor por m²</small><strong>' +
     money(getMinPrice(p) / p.area) + '</strong></div><div><small>' +
     (p.front ? 'Dimensões' : 'Ofertas') + '</small><strong>' +
     (p.front ? fmt(p.front) + ' × ' + fmt(p.depth) + ' m' : p.offers.length) +
-    '</strong></div></div><div class="detailactions"><button class="secondary" data-fav="' + p.id + '">' +
-    (fav.has(p.id) ? '♥ Salvo' : '♡ Salvar') + '</button><button class="secondary" data-comp="' + p.id + '">' +
-    (comp.has(p.id) ? '✓ Comparando' : '＋ Comparar') + '</button><button class="secondary" id="shareProp">↗ Compartilhar</button></div>' +
+    '</strong></div></div><div class="detailactions"><button type="button" class="secondary" data-fav="' + p.id + '">' +
+    icon(fav.has(p.id) ? 'heartFilled' : 'heart') + (fav.has(p.id) ? ' Salvo' : ' Salvar') + '</button><button type="button" class="secondary" data-comp="' + p.id + '">' +
+    icon('compare') + (comp.has(p.id) ? ' Comparando' : ' Comparar') + '</button><button type="button" class="secondary" id="shareProp">' + icon('share') + ' Compartilhar</button></div>' +
     '<h3>Sobre o imóvel</h3><p>' + esc(p.description) + '</p>' +
     '<h3>Compare as ' + p.offers.length + ' ofertas</h3>' +
     offersHtml +
     (p.offers.length > 1
       ? '<p class="muted">Diferença entre ofertas: <strong>' + money(p.offers.at(-1).price - getMinPrice(p)) + '</strong></p>'
       : '') +
-    (!hasMyOffer
-      ? '<button class="secondary" id="offerHere">＋ Adicionar oferta neste imóvel</button>'
-      : '') +
-    '<p class="muted" style="margin-top:15px">Endereço, medidas e limites de exemplo não são cadastrais. Anúncio fictício.</p></div>';
+    (p.is_demo ? '<p class="muted" style="margin-top:14px">Anúncio demonstrativo para visualização da plataforma.</p>' : '') +
+    '</div>';
 
   if (photos.length > 1) {
     const updateSlide = () => {
@@ -397,12 +392,6 @@ function populateDistrict() {
 }
 
 function openAgency() {
-  const session = readStorage('session', null);
-  if (!session) {
-    openDialog('agencyAuthDialog');
-    return;
-  }
-  // Logged in → go to dashboard
   window.location.href = '/painel.html';
 }
 
@@ -614,194 +603,22 @@ $('filterForm').onsubmit = (e) => {
   hideDetail();
 };
 $('agency').onclick = openAgency;
-$('authTabLogin').onclick = () => {
-  $('authTabLogin').classList.add('active');
-  $('authTabRegister').classList.remove('active');
-  $('loginForm').hidden = false;
-  $('registerForm').hidden = true;
-};
-$('authTabRegister').onclick = () => {
-  $('authTabRegister').classList.add('active');
-  $('authTabLogin').classList.remove('active');
-  $('registerForm').hidden = false;
-  $('loginForm').hidden = true;
-};
-$('loginForm').onsubmit = (e) => {
-  e.preventDefault();
-  const f = Object.fromEntries(new FormData(e.target));
-  const accounts = readStorage('accounts', []);
-  const acc = accounts.find(
-    (a) => a.email.toLowerCase() === f.email.trim().toLowerCase() && a.password === f.password
-  );
-  if (!acc) {
-    toast('E-mail ou senha inválidos neste navegador');
-    return;
-  }
-  writeStorage('session', { name: acc.name, email: acc.email, phone: acc.phone || '' }, toast);
-  closeDialog('agencyAuthDialog');
-  window.location.href = '/painel.html';
-  toast('Bem-vindo, ' + acc.name + '!');
-};
-$('registerForm').onsubmit = (e) => {
-  e.preventDefault();
-  const f = Object.fromEntries(new FormData(e.target));
-  const accounts = readStorage('accounts', []);
-  const email = f.email.trim().toLowerCase();
-  if (accounts.some((a) => a.email.toLowerCase() === email)) {
-    toast('Já existe uma conta com este e-mail');
-    return;
-  }
-  const acc = {
-    name: f.name.trim(),
-    email,
-    phone: (f.phone || '').trim(),
-    password: f.password,
-  };
-  if (!writeStorage('accounts', [...accounts, acc], toast)) return;
-  writeStorage('session', { name: acc.name, email: acc.email, phone: acc.phone }, toast);
-  closeDialog('agencyAuthDialog');
-  window.location.href = '/painel.html';
-  toast('Conta criada com sucesso!');
-};
-$('agencyLogout').onclick = () => {
-  localStorage.removeItem('t360-session');
-  closeDialog('agencyDialog');
-  toast('Sessão encerrada');
-};
-$('newProperty').onclick = () => {
-  closeDialog('agencyDialog');
-  newProp();
-};
-$('newOffer').onclick = () => {
-  closeDialog('agencyDialog');
-  openOffer();
-};
-$('pickLocation').onclick = () => {
-  if (!mapCtrl.startDraw()) {
-    toast('O mapa não está disponível');
-    return;
-  }
-  closeDialog('propertyDialog');
-  setPanel(false);
-  $('panel').classList.remove('detailopen');
-  $('drawBar').hidden = false;
-  $('drawHint').textContent =
-    'Toque para marcar a posição; 3+ pontos formam um limite demonstrativo.';
-  $('finishDraw').disabled = true;
-};
+$('filterDialog').addEventListener('click', (e) => {
+  if (e.target === $('filterDialog')) closeDialog('filterDialog');
+});
 $('undoPoint').onclick = () => mapCtrl.undoDrawPoint();
 $('finishDraw').onclick = () => {
   const res = mapCtrl.endDraw(true);
   if (res) {
     draftLocation = res;
-    $('locationStatus').textContent = 'Localização marcada ✓';
   }
   $('drawBar').hidden = true;
   render();
-  openDialog('propertyDialog');
 };
 $('cancelDraw').onclick = () => {
   mapCtrl.endDraw(false);
   $('drawBar').hidden = true;
   render();
-  openDialog('propertyDialog');
-};
-$('photo').onchange = async (e) => {
-  const f = e.target.files[0];
-  photoData = '';
-  if (!f) return;
-  if (f.size > 2 * 1024 * 1024 || !['image/jpeg', 'image/png', 'image/webp'].includes(f.type)) {
-    toast('Escolha JPG, PNG ou WebP de até 2 MB');
-    e.target.value = '';
-    return;
-  }
-  const r = new FileReader();
-  r.onload = () => (photoData = r.result);
-  r.readAsDataURL(f);
-};
-$('propertyForm').onsubmit = (e) => {
-  e.preventDefault();
-  if (!draftLocation) {
-    toast('Marque a localização no mapa primeiro');
-    return;
-  }
-  const session = readStorage('session', null);
-  const f = Object.fromEntries(new FormData(e.target));
-  const p = {
-    id: 'P' + Date.now().toString(36),
-    title: f.title,
-    type: f.type,
-    district: f.district,
-    area: +f.area,
-    front: +f.front || 0,
-    depth: +f.depth || 0,
-    beds: +f.beds || 0,
-    deal: f.deal,
-    description: f.description || 'Anúncio demonstrativo cadastrado pela imobiliária.',
-    ...draftLocation,
-    photo: photoData,
-    mine: true,
-    offers: [{ agency: f.agency, price: +f.price, phone: session?.phone || '' }],
-  };
-  const next = [...mine, p];
-  if (!writeStorage('mine', next, toast)) return;
-  mine = next;
-  closeDialog('propertyDialog');
-  switchMode('all');
-  resetAll();
-  select(p.id);
-  toast('Imóvel cadastrado neste navegador!');
-};
-$('offerForm').onsubmit = (e) => {
-  e.preventDefault();
-  const session = readStorage('session', null);
-  const f = Object.fromEntries(new FormData(e.target));
-  const agencyName = f.agency;
-  const propId = f.id;
-  const newPrice = +f.price;
-  const phone = session?.phone || '';
-
-  // Update existing offer if same agency already has one for this property
-  const alreadyInMine = mine.find((p) => p.id === propId)?.offers
-    .findIndex((o) => o.agency.toLowerCase() === agencyName.toLowerCase());
-  if (alreadyInMine !== undefined && alreadyInMine >= 0) {
-    const nextMine = mine.map((p) => {
-      if (p.id !== propId) return p;
-      const updatedOffers = p.offers.map((o, i) =>
-        i === alreadyInMine ? { ...o, price: newPrice, phone } : o
-      );
-      return { ...p, offers: updatedOffers };
-    });
-    if (!writeStorage('mine', nextMine, toast)) return;
-    mine = nextMine;
-    closeDialog('offerDialog');
-    select(propId);
-    toast('Oferta atualizada!');
-    return;
-  }
-
-  const alreadyInExtra = extra.findIndex(
-    (o) => o.id === propId && o.agency.toLowerCase() === agencyName.toLowerCase()
-  );
-  if (alreadyInExtra >= 0) {
-    const nextExtra = extra.map((o, i) =>
-      i === alreadyInExtra ? { ...o, price: newPrice, phone } : o
-    );
-    if (!writeStorage('offers', nextExtra, toast)) return;
-    extra = nextExtra;
-    closeDialog('offerDialog');
-    select(propId);
-    toast('Oferta atualizada!');
-    return;
-  }
-
-  // New offer
-  const next = [...extra, { id: propId, agency: agencyName, price: newPrice, phone }];
-  if (!writeStorage('offers', next, toast)) return;
-  extra = next;
-  closeDialog('offerDialog');
-  select(propId);
-  toast('Oferta adicionada!');
 };
 
 mapCtrl.init();

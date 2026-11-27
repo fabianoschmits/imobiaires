@@ -1,32 +1,55 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#1747b5"><meta name="robots" content="noindex,nofollow"><title>ImobiAires — Painel da Imobiliária</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/base.css"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/painel.css"></head>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#244D85">
+  <meta name="robots" content="noindex,nofollow">
+  <title>ImobiAires — Painel da Imobiliária</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/painel.css">
+</head>
 <body class="painel-body">
 
 <!-- AUTH SCREEN -->
 <div id="authScreen" class="auth-screen" hidden>
   <div class="auth-card">
     <a href="/" class="brand auth-brand" aria-label="Voltar ao mapa">
-      <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg></span>
-      <span class="brand-copy"><span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span><small>BUSINESS</small></span>
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg>
+      </span>
+      <span class="brand-copy">
+        <span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span>
+        <small>VENÂNCIO AIRES · RS</small>
+      </span>
     </a>
-    <div class="eyebrow" style="margin-top:24px">ÁREA EXCLUSIVA</div>
-    <h1 style="margin-top:6px;font-size:22px">Painel da Imobiliária</h1>
-    <p style="margin-bottom:20px">Entre ou crie sua conta para gerenciar seus anúncios.</p>
-    <div class="chips" style="margin-bottom:20px">
+    <div class="eyebrow" style="margin-top:20px">Área da imobiliária</div>
+    <h1 style="margin-top:4px;font-size:20px">Painel de gerenciamento</h1>
+    <p style="margin-bottom:18px">Entre ou crie sua conta para gerenciar seus anúncios.</p>
+    <div class="chips" style="margin-bottom:16px">
       <button type="button" id="authTabLogin" class="chip active">Entrar</button>
       <button type="button" id="authTabRegister" class="chip">Criar conta</button>
     </div>
     <div id="authError" class="auth-error" hidden style="margin-bottom:14px;margin-top:0"></div>
+
     <form id="loginForm" novalidate>
       <label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="contato@imobiliaria.com"></label>
       <label>Senha
         <div class="pw-wrap">
           <input name="password" type="password" required minlength="4" autocomplete="current-password" placeholder="••••••••">
-          <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">👁</button>
+          <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
+          </button>
         </div>
       </label>
       <button type="submit" class="primary auth-submit">Entrar</button>
     </form>
+
     <form id="registerForm" hidden novalidate>
       <label>Seu nome<input name="owner_name" required maxlength="60" autocomplete="name" placeholder="Ex.: João Silva"></label>
       <label>Nome da imobiliária<input name="name" required maxlength="60" autocomplete="organization" placeholder="Ex.: Imobiliária Centro"></label>
@@ -41,12 +64,14 @@
       <label>Senha
         <div class="pw-wrap">
           <input name="password" type="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
-          <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">👁</button>
+          <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
+          </button>
         </div>
       </label>
       <button type="submit" class="primary auth-submit">Criar conta e entrar</button>
     </form>
-    <p class="muted" style="font-size:11px;text-align:center;margin-top:16px">Acesso seguro via Supabase. Seus anúncios ficam salvos na nuvem.</p>
+    <p class="muted" style="font-size:11px;text-align:center;margin-top:14px">Acesso seguro via Supabase.</p>
   </div>
 </div>
 
@@ -54,31 +79,41 @@
 <div id="dashScreen" hidden>
   <header class="painel-header">
     <a href="/" class="brand" aria-label="Voltar ao mapa">
-      <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg></span>
-      <span class="brand-copy"><span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span><small>BUSINESS</small></span>
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg>
+      </span>
+      <span class="brand-copy">
+        <span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span>
+        <small>VENÂNCIO AIRES · RS</small>
+      </span>
     </a>
     <div class="painel-header-info">
       <span id="sessionName" class="painel-agency-name"></span>
-      <a href="/" class="secondary" style="text-decoration:none;font-size:13px">← Ver mapa</a>
-      <button id="logoutBtn" class="secondary">Sair</button>
+      <a href="/" class="secondary">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0l6-6m-6 6l6 6"/></svg>
+        Ver mapa
+      </a>
+      <button id="logoutBtn" type="button" class="secondary">Sair</button>
     </div>
   </header>
 
   <main class="painel-main">
     <div class="painel-top">
       <div>
-        <div class="eyebrow">SEUS ANÚNCIOS</div>
+        <div class="eyebrow">Seus anúncios</div>
         <h2 style="margin:4px 0 0">Gerenciar imóveis</h2>
       </div>
-      <button id="newPropBtn" class="primary">＋ Novo imóvel</button>
+      <button id="newPropBtn" type="button" class="primary">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Novo imóvel
+      </button>
     </div>
 
     <div class="painel-stats" id="painelStats"></div>
-
     <div id="propGrid" class="prop-grid"></div>
 
     <p id="emptyMsg" class="muted" style="text-align:center;padding:40px 0" hidden>
-      Você ainda não tem imóveis cadastrados.<br>Clique em <strong>+ Novo imóvel</strong> para começar.
+      Você ainda não tem imóveis cadastrados.<br>Clique em <strong>Novo imóvel</strong> para começar.
     </p>
   </main>
 </div>
@@ -88,14 +123,15 @@
   <form id="propForm" novalidate>
     <div class="modalhead">
       <div>
-        <div class="eyebrow" id="propDialogEyebrow">NOVO ANÚNCIO</div>
+        <div class="eyebrow" id="propDialogEyebrow">Novo anúncio</div>
         <h2 id="propDialogTitle">Cadastrar imóvel</h2>
       </div>
-      <button type="button" class="close" data-close="propDialog">×</button>
+      <button type="button" class="close" data-close="propDialog" aria-label="Fechar">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
     </div>
 
     <div class="painel-form-body">
-      <!-- Left column -->
       <div class="painel-form-col">
         <h3 class="form-section-title">Informações gerais</h3>
         <div class="formgrid">
@@ -111,11 +147,14 @@
         </div>
         <label class="span2">Descrição<textarea name="description" maxlength="600" rows="4" placeholder="Descreva o imóvel: características, diferenciais, pontos de referência..."></textarea></label>
 
-        <h3 class="form-section-title">Fotos</h3>
+        <h3 class="form-section-title">Fotografias</h3>
         <div class="photo-upload-area" id="photoUploadArea">
           <div id="photoPreview" class="photo-thumbs" hidden></div>
           <label id="photoLabel" class="photo-label">
-            <span>📷 Clique para adicionar fotos</span>
+            <span>
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 8z"/><circle cx="12" cy="13.5" r="3.2"/></svg>
+              Clique para adicionar fotos
+            </span>
             <small>JPG, PNG ou WebP · várias fotos · 1ª é a capa</small>
             <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
           </label>
@@ -124,14 +163,19 @@
         <input type="hidden" name="photoData" id="photoData">
       </div>
 
-      <!-- Right column: map -->
       <div class="painel-form-col">
         <h3 class="form-section-title">Localização no mapa</h3>
         <p class="muted" style="font-size:12px;margin-bottom:8px">Clique no mapa para marcar a posição. Com 3+ cliques cria um polígono de limite.</p>
         <div id="propMap" class="prop-map"></div>
         <div class="map-actions">
-          <button type="button" id="undoMapPt" class="secondary" disabled>↩ Desfazer ponto</button>
-          <button type="button" id="clearMapPts" class="secondary">✕ Limpar</button>
+          <button type="button" id="undoMapPt" class="secondary" disabled>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+            Desfazer ponto
+          </button>
+          <button type="button" id="clearMapPts" class="secondary">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            Limpar
+          </button>
         </div>
         <p id="mapStatus" class="muted" style="font-size:12px;margin-top:4px">Nenhuma posição marcada.</p>
         <input type="hidden" name="lat" id="latInput">
@@ -150,5 +194,5 @@
 <div id="toast" role="status"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module" src="/js/painel.js"></script>
-</body></html>
-
+</body>
+</html>

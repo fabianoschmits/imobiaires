@@ -1,0 +1,40 @@
+:root {
+  /* Palette - Editorial Design System */
+  --blue: #244D85;
+  --blue-dark: #1D4275;
+  --ink: #25364B;
+  --muted: #697583;
+  --paper: #F7F7F5;
+  --surface: #FFFFFF;
+  --line: #E2E5E8;
+  --light: #EAF0F7;
+  --photo: #EFF1EE;
+  --photo-ink: #74847B;
+  --fav: #AD3851;
+  --success: #1F6F54;
+  --danger: #B42318;
+  --warn: #B54708;
+
+  /* Typography */
+  --font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Radii */
+  --r-btn: 6px;
+  --r-input: 6px;
+  --r-photo: 7px;
+  --r-card: 8px;
+  --r-modal: 10px;
+  --r-pin: 5px;
+  --r-sheet: 13px;
+
+  /* Shadows (minimal & functional) */
+  --shadow-sm: 0 1px 3px rgba(37, 54, 75, 0.08);
+  --shadow-md: 0 4px 14px rgba(37, 54, 75, 0.12);
+  --shadow-lg: 0 12px 32px rgba(37, 54, 75, 0.16);
+
+  /* Motion */
+  --t-fast: 150ms;
+  --t-med: 200ms;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+

@@ -2,6 +2,7 @@
 import { signIn, signUp, signOut, createAgency, getMyAgency, fetchMyProperties, upsertProperty, uploadPhoto, deleteProperty, upsertOffer, isAdmin } from './supabase.js';
 import { money, fmt, esc, renderIllustration } from './catalog.js';
 import { readStorage, writeStorage } from './storage.js';
+import { icon } from './icons.js';
 
 const ADMIN_EMAIL = 'fabiano.schmits@outlook.com';
 const $ = (s) => document.getElementById(s);
@@ -38,21 +39,21 @@ async function showDash() {
   $('authScreen').hidden = true;
   $('dashScreen').hidden = false;
   adminMode = session?.user?.email === ADMIN_EMAIL;
-  $('sessionName').innerHTML = (myAgency?.logo_url ? `<img src="${esc(myAgency.logo_url)}" alt="" style="width:24px;height:24px;border-radius:6px;object-fit:cover;vertical-align:middle;margin-right:6px">` : '') +
+  $('sessionName').innerHTML = (myAgency?.logo_url ? `<img src="${esc(myAgency.logo_url)}" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover">` : '') +
     esc(adminMode
-      ? '👑 Admin — ' + (myAgency?.name || 'ImobiAires')
+      ? 'Admin — ' + (myAgency?.name || 'ImobiAires')
       : (myAgency?.name || session?.user?.email || 'Imobiliária')) +
-    (myAgency?.slug ? ` <a href="/${esc(myAgency.slug)}" target="_blank" style="font-size:12px;color:#1d4ed8;margin-left:6px;text-decoration:underline">/${esc(myAgency.slug)} ↗</a>` : '');
+    (myAgency?.slug ? ` <a href="/${esc(myAgency.slug)}" target="_blank" style="font-size:12px;color:var(--blue);margin-left:4px;text-decoration:underline">/${esc(myAgency.slug)}</a>` : '');
   // Show admin banner if admin
   let banner = $('adminBanner');
   if (!banner) {
     banner = document.createElement('div');
     banner.id = 'adminBanner';
-    banner.style.cssText = 'background:#1d4ed8;color:#fff;text-align:center;padding:8px 16px;font-size:13px;font-weight:600;';
+    banner.style.cssText = 'background:var(--blue);color:#fff;text-align:center;padding:8px 16px;font-size:12.5px;font-weight:600;';
     document.body.prepend(banner);
   }
   banner.hidden = !adminMode;
-  banner.textContent = adminMode ? '👑 Modo Admin — você está vendo todos os imóveis do sistema.' : '';
+  banner.textContent = adminMode ? 'Modo Admin — visualizando todos os imóveis do sistema.' : '';
   await renderDash();
 }
 
@@ -79,7 +80,7 @@ async function renderDash() {
     // Admin can edit any property; regular agency can only edit their own
     const canEdit = adminMode || p.created_by === session?.user?.id;
     const agencyLabel = adminMode && offer?.agencies?.name
-      ? `<div class="prop-card-agency">🏢 ${esc(offer.agencies.name)}</div>` : '';
+      ? `<div class="prop-card-agency">${icon('agency')}<span>${esc(offer.agencies.name)}</span></div>` : '';
     return `
       <div class="prop-card">
         <div class="prop-card-img">
@@ -88,19 +89,19 @@ async function renderDash() {
         </div>
         <div class="prop-card-body">
           <p class="prop-card-title">${esc(p.title)}</p>
-          <div class="prop-card-loc">⌖ ${esc(p.district)} · Venâncio Aires</div>
+          <div class="prop-card-loc">${icon('pin')}<span>${esc(p.district)} · Venâncio Aires</span></div>
           ${agencyLabel}
-          <div class="prop-card-price">${money(price)}${p.deal === 'Aluguel' ? '<small style="font-size:13px">/mês</small>' : ''}</div>
+          <div class="prop-card-price">${money(price)}${p.deal === 'Aluguel' ? '<small style="font-size:12px">/mês</small>' : ''}</div>
           <div class="prop-card-meta">
-            <span>▱ ${fmt(p.area)} m²</span>
-            ${p.front ? `<span>${fmt(p.front)} × ${fmt(p.depth)} m</span>` : ''}
-            ${p.beds ? `<span>${p.beds} quartos</span>` : ''}
-            ${price && p.area ? `<span>${money(price / p.area)}/m²</span>` : ''}
+            <span>${fmt(p.area)} m²</span>
+            ${p.front ? `<span>· ${fmt(p.front)} × ${fmt(p.depth)} m</span>` : ''}
+            ${p.beds ? `<span>· ${p.beds} quartos</span>` : ''}
+            ${price && p.area ? `<span>· ${money(price / p.area)}/m²</span>` : ''}
           </div>
         </div>
         <div class="prop-card-actions">
-          ${canEdit ? `<button class="secondary" data-edit="${p.id}">✎ Editar</button>` : ''}
-          ${canEdit ? `<button class="secondary" style="color:#c0392b;border-color:#f5b8b8" data-delete="${p.id}">🗑 Excluir</button>` : '<span class="muted" style="font-size:12px">Somente leitura</span>'}
+          ${canEdit ? `<button type="button" class="secondary" data-edit="${p.id}">${icon('edit')} Editar</button>` : ''}
+          ${canEdit ? `<button type="button" class="secondary" style="color:var(--danger)" data-delete="${p.id}">${icon('trash')} Excluir</button>` : '<span class="muted" style="font-size:12px">Somente leitura</span>'}
         </div>
       </div>`;
   }).join('');
@@ -206,7 +207,7 @@ function renderPhotoThumbs() {
       ${i === 0
         ? '<span class="photo-thumb-badge">Capa</span>'
         : `<button type="button" class="photo-thumb-cover" data-cover-photo="${i}">Capa</button>`}
-      <button type="button" class="photo-thumb-del" data-del-photo="${i}" title="Remover">✕</button>
+      <button type="button" class="photo-thumb-del" data-del-photo="${i}" aria-label="Remover foto" title="Remover">${icon('close')}</button>
     </div>
   `).join('');
   wrap.hidden = false;
@@ -360,6 +361,7 @@ document.querySelectorAll('.pw-toggle').forEach((btn) => {
     const show = input.type === 'password';
     input.type = show ? 'text' : 'password';
     btn.classList.toggle('active', show);
+    btn.innerHTML = icon(show ? 'eyeOff' : 'eye');
     btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
     btn.setAttribute('title', show ? 'Ocultar senha' : 'Mostrar senha');
   });

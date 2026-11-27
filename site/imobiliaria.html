@@ -3,39 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#1747b5">
+  <meta name="theme-color" content="#244D85">
   <meta name="robots" content="noindex,nofollow">
   <title>Imobiliária — ImobiAires</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/base.css">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/painel.css">
   <style>
-    .ag-hero{background:#fff;border-bottom:1px solid #e1e7ef;padding:28px 24px}
-    .ag-hero-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-    .ag-logo{width:72px;height:72px;border-radius:16px;object-fit:cover;border:1px solid #e1e7ef;background:#f0f4fb;display:grid;place-items:center;font-size:28px;font-weight:800;color:#1d4ed8;flex-shrink:0}
-    .ag-info h1{margin:0 0 4px;font-size:24px}
-    .ag-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:#65738a;font-weight:600}
+    .ag-hero{background:var(--surface);border-bottom:1px solid var(--line);padding:24px}
+    .ag-hero-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    .ag-logo{width:64px;height:64px;border-radius:var(--r-card);object-fit:cover;border:1px solid var(--line);background:var(--light);display:grid;place-items:center;font-size:24px;font-weight:700;color:var(--blue);flex-shrink:0}
+    .ag-info h1{margin:0 0 4px;font-size:22px}
+    .ag-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-weight:500}
+    .ag-meta span{display:inline-flex;align-items:center;gap:5px}
     .ag-card{cursor:pointer;text-decoration:none;color:inherit}
   </style>
 </head>
 <body class="painel-body">
   <header class="painel-header">
     <a href="/" class="brand" aria-label="Voltar ao mapa">
-      <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg></span>
-      <span class="brand-copy"><span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span><small>VENÂNCIO AIRES</small></span>
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg>
+      </span>
+      <span class="brand-copy">
+        <span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span>
+        <small>VENÂNCIO AIRES · RS</small>
+      </span>
     </a>
-    <a href="/" class="secondary" style="font-size:13px">← Ver mapa completo</a>
+    <a href="/" class="secondary">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0l6-6m-6 6l6 6"/></svg>
+      Ver mapa completo
+    </a>
   </header>
 
   <section class="ag-hero" id="agHero" hidden>
     <div class="ag-hero-inner">
       <div id="agLogoWrap"></div>
       <div class="ag-info">
-        <div class="eyebrow">IMOBILIÁRIA PARCEIRA</div>
+        <div class="eyebrow">Imobiliária parceira</div>
         <h1 id="agName"></h1>
         <div class="ag-meta" id="agMeta"></div>
       </div>
@@ -52,6 +60,7 @@
   <script type="module">
     import { fetchAgencyBySlug, fetchPropertiesByAgency } from '/js/supabase.js';
     import { money, fmt, esc, renderIllustration } from '/js/catalog.js';
+    import { icon } from '/js/icons.js';
 
     const params = new URLSearchParams(location.search);
     const pathSlug = location.pathname.replace(/^\/+|\/+$/g, '');
@@ -76,8 +85,8 @@
         : `<div class="ag-logo">${esc(agency.name.charAt(0).toUpperCase())}</div>`;
 
       const meta = [];
-      if (agency.creci) meta.push(`<span>🪪 ${esc(agency.creci)}</span>`);
-      if (agency.phone) meta.push(`<span>📱 ${esc(agency.phone)}</span>`);
+      if (agency.creci) meta.push(`<span>${icon('shield')} ${esc(agency.creci)}</span>`);
+      if (agency.phone) meta.push(`<span>${icon('whatsapp')} ${esc(agency.phone)}</span>`);
       document.getElementById('agMeta').innerHTML = meta.join('');
 
       const props = await fetchPropertiesByAgency(agency.id).catch(() => []);
@@ -89,7 +98,7 @@
       document.getElementById('agGrid').innerHTML = props.map((p) => {
         const offer = p.offers?.[0];
         const price = offer?.price || 0;
-        const imgHtml = p.photo_url ? `<img src="${esc(p.photo_url)}" alt="Foto do imóvel">` : renderIllustration(p);
+        const imgHtml = p.photo_url ? `<img src="${esc(p.photo_url)}" alt="${esc(p.title)}" loading="lazy">` : renderIllustration(p);
         return `
           <a class="prop-card ag-card" href="/?imovel=${encodeURIComponent(p.id)}">
             <div class="prop-card-img">
@@ -98,16 +107,16 @@
             </div>
             <div class="prop-card-body">
               <p class="prop-card-title">${esc(p.title)}</p>
-              <div class="prop-card-loc">⌖ ${esc(p.district)} · Venâncio Aires</div>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;color:#52637e;font-weight:600">
-                ${agency.logo_url ? `<img src="${esc(agency.logo_url)}" alt="${esc(agency.name)}" style="width:20px;height:20px;border-radius:5px;object-fit:cover;border:1px solid #e1e7ef">` : ''}
+              <div class="prop-card-loc">${icon('pin')}<span>${esc(p.district)} · Venâncio Aires</span></div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;color:var(--muted);font-weight:500">
+                ${agency.logo_url ? `<img src="${esc(agency.logo_url)}" alt="${esc(agency.name)}" style="width:20px;height:20px;border-radius:4px;object-fit:cover;border:1px solid var(--line)">` : ''}
                 <span>${esc(agency.name)}</span>
-                ${agency.creci ? `<span style="color:#65738a">· ${esc(agency.creci)}</span>` : ''}
+                ${agency.creci ? `<span>· ${esc(agency.creci)}</span>` : ''}
               </div>
-              <div class="prop-card-price">${money(price)}${p.deal === 'Aluguel' ? '<small style="font-size:13px">/mês</small>' : ''}</div>
+              <div class="prop-card-price">${money(price)}${p.deal === 'Aluguel' ? '<small style="font-size:12px">/mês</small>' : ''}</div>
               <div class="prop-card-meta">
-                <span>▱ ${fmt(p.area)} m²</span>
-                ${p.beds ? `<span>${p.beds} quartos</span>` : ''}
+                <span>${fmt(p.area)} m²</span>
+                ${p.beds ? `<span>· ${p.beds} quartos</span>` : ''}
               </div>
             </div>
           </a>`;
@@ -116,4 +125,3 @@
   </script>
 </body>
 </html>
-
