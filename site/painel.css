@@ -222,6 +222,8 @@
   width: min(960px, 96vw);
   max-height: 90dvh;
   overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   border-radius: var(--r-modal);
   border: 1px solid var(--line);
   padding: 0;

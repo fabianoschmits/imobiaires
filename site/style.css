@@ -596,6 +596,11 @@ input[type=checkbox] { accent-color: var(--blue); }
 }
 
 /* Dialogs & Right Filter Drawer */
+body:has(dialog[open]) {
+  overflow: hidden;
+  touch-action: none;
+}
+
 dialog {
   border: 1px solid var(--line);
   border-radius: var(--r-modal);
@@ -603,7 +608,9 @@ dialog {
   width: 500px;
   padding: 22px;
   max-height: 90dvh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   color: var(--ink);
   background: var(--surface);
   box-shadow: var(--shadow-lg);
