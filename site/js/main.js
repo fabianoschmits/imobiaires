@@ -76,6 +76,9 @@ const mapCtrl = createMapController({
   onMapError: (show) => {
     $('mapError').hidden = !show;
   },
+  onMapClick: () => {
+    if (active) hideDetail();
+  },
 });
 
 function getFiltered() {

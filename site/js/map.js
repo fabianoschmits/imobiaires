@@ -1,7 +1,7 @@
 import { CENTER, MAP_PROVIDERS } from './config.js';
 import { esc, getCompactPrice } from './catalog.js';
 
-export function createMapController({ onRender, onSelect, onMapError }) {
+export function createMapController({ onRender, onSelect, onMapError, onMapClick }) {
   let map = null;
   let satLayer = null;
   let streetLayer = null;
@@ -48,6 +48,8 @@ export function createMapController({ onRender, onSelect, onMapError }) {
       if (drawing) {
         points.push([e.latlng.lat, e.latlng.lng]);
         renderDraw();
+      } else if (onMapClick) {
+        onMapClick();
       }
     });
     setTimeout(() => map.invalidateSize(), 100);
