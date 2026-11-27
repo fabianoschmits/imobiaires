@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#1747b5"><meta name="robots" content="noindex,nofollow"><title>ImobiAires — Painel da Imobiliária</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/base.css"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/painel.css"></head>
+<body class="painel-body">
+
+<!-- AUTH SCREEN -->
+<div id="authScreen" class="auth-screen" hidden>
+  <div class="auth-card">
+    <a href="/" class="brand auth-brand" aria-label="Voltar ao mapa">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg></span>
+      <span class="brand-copy"><span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span><small>BUSINESS</small></span>
+    </a>
+    <div class="eyebrow" style="margin-top:24px">ÁREA EXCLUSIVA</div>
+    <h1 style="margin-top:6px;font-size:22px">Painel da Imobiliária</h1>
+    <p style="margin-bottom:20px">Entre ou crie sua conta para gerenciar seus anúncios.</p>
+    <div class="chips" style="margin-bottom:20px">
+      <button type="button" id="authTabLogin" class="chip active">Entrar</button>
+      <button type="button" id="authTabRegister" class="chip">Criar conta</button>
+    </div>
+    <form id="loginForm">
+      <label>E-mail<input name="email" type="email" required placeholder="contato@imobiliaria.com"></label>
+      <label>Senha<input name="password" type="password" required minlength="4" placeholder="••••••"></label>
+      <button class="primary" style="width:100%;margin-top:8px">Entrar</button>
+    </form>
+    <form id="registerForm" hidden>
+      <label>Nome da imobiliária<input name="name" required maxlength="60" placeholder="Ex.: Imobiliária Centro"></label>
+      <label>E-mail<input name="email" type="email" required placeholder="contato@imobiliaria.com"></label>
+      <label>WhatsApp (opcional)<input name="phone" maxlength="20" placeholder="(51) 99999-9999"></label>
+      <label>Senha<input name="password" type="password" required minlength="4" placeholder="Mínimo 4 caracteres"></label>
+      <button class="primary" style="width:100%;margin-top:8px">Criar conta e entrar</button>
+    </form>
+    <div id="authError" class="auth-error" hidden></div>
+    <p class="muted" style="font-size:11px;text-align:center;margin-top:16px">Os dados ficam salvos neste navegador. Demonstração — sem servidor real.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD SCREEN -->
+<div id="dashScreen" hidden>
+  <header class="painel-header">
+    <a href="/" class="brand" aria-label="Voltar ao mapa">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg></span>
+      <span class="brand-copy"><span class="brand-main"><span class="brand-word brand-word-1">imobi</span><span class="brand-word brand-word-2">aires</span></span><small>BUSINESS</small></span>
+    </a>
+    <div class="painel-header-info">
+      <span id="sessionName" class="painel-agency-name"></span>
+      <a href="/" class="secondary" style="text-decoration:none;font-size:13px">← Ver mapa</a>
+      <button id="logoutBtn" class="secondary">Sair</button>
+    </div>
+  </header>
+
+  <main class="painel-main">
+    <div class="painel-top">
+      <div>
+        <div class="eyebrow">SEUS ANÚNCIOS</div>
+        <h2 style="margin:4px 0 0">Gerenciar imóveis</h2>
+      </div>
+      <button id="newPropBtn" class="primary">＋ Novo imóvel</button>
+    </div>
+
+    <div class="painel-stats" id="painelStats"></div>
+
+    <div id="propGrid" class="prop-grid"></div>
+
+    <p id="emptyMsg" class="muted" style="text-align:center;padding:40px 0" hidden>
+      Você ainda não tem imóveis cadastrados.<br>Clique em <strong>+ Novo imóvel</strong> para começar.
+    </p>
+  </main>
+</div>
+
+<!-- PROPERTY FORM DIALOG -->
+<dialog id="propDialog" class="wide painel-dialog">
+  <form id="propForm" novalidate>
+    <div class="modalhead">
+      <div>
+        <div class="eyebrow" id="propDialogEyebrow">NOVO ANÚNCIO</div>
+        <h2 id="propDialogTitle">Cadastrar imóvel</h2>
+      </div>
+      <button type="button" class="close" data-close="propDialog">×</button>
+    </div>
+
+    <div class="painel-form-body">
+      <!-- Left column -->
+      <div class="painel-form-col">
+        <h3 class="form-section-title">Informações gerais</h3>
+        <div class="formgrid">
+          <label class="span2">Título do anúncio<input name="title" required maxlength="90" placeholder="Ex.: Terreno residencial de esquina"></label>
+          <label>Tipo<select name="type"><option>Terreno</option><option>Casa</option><option>Apartamento</option><option>Comercial</option></select></label>
+          <label>Negociação<select name="deal"><option>Venda</option><option>Aluguel</option></select></label>
+          <label>Bairro<input name="district" required maxlength="60" placeholder="Ex.: Centro"></label>
+          <label>Preço (R$)<input name="price" type="number" required min="1" max="1000000000" placeholder="Ex.: 150000"></label>
+          <label>Área (m²)<input name="area" type="number" required min="1" step=".01" placeholder="Ex.: 450"></label>
+          <label>Frente (m)<input name="front" type="number" min="0" step=".01" placeholder="Opcional"></label>
+          <label>Profundidade (m)<input name="depth" type="number" min="0" step=".01" placeholder="Opcional"></label>
+          <label>Quartos<input name="beds" type="number" min="0" max="100" placeholder="Se aplicável"></label>
+        </div>
+        <label class="span2">Descrição<textarea name="description" maxlength="600" rows="4" placeholder="Descreva o imóvel: características, diferenciais, pontos de referência..."></textarea></label>
+
+        <h3 class="form-section-title">Foto</h3>
+        <div class="photo-upload-area" id="photoUploadArea">
+          <div id="photoPreview" class="photo-preview" hidden></div>
+          <label id="photoLabel" class="photo-label">
+            <span>📷 Clique para adicionar foto</span>
+            <small>JPG, PNG ou WebP · até 2 MB</small>
+            <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+          </label>
+          <button type="button" id="removePhoto" class="secondary" hidden>Remover foto</button>
+        </div>
+        <input type="hidden" name="photoData" id="photoData">
+      </div>
+
+      <!-- Right column: map -->
+      <div class="painel-form-col">
+        <h3 class="form-section-title">Localização no mapa</h3>
+        <p class="muted" style="font-size:12px;margin-bottom:8px">Clique no mapa para marcar a posição. Com 3+ cliques cria um polígono de limite.</p>
+        <div id="propMap" class="prop-map"></div>
+        <div class="map-actions">
+          <button type="button" id="undoMapPt" class="secondary" disabled>↩ Desfazer ponto</button>
+          <button type="button" id="clearMapPts" class="secondary">✕ Limpar</button>
+        </div>
+        <p id="mapStatus" class="muted" style="font-size:12px;margin-top:4px">Nenhuma posição marcada.</p>
+        <input type="hidden" name="lat" id="latInput">
+        <input type="hidden" name="lng" id="lngInput">
+        <input type="hidden" name="points" id="pointsInput">
+      </div>
+    </div>
+
+    <div class="modalfoot" style="margin-top:24px">
+      <button type="button" id="cancelPropBtn" class="secondary">Cancelar</button>
+      <button type="submit" class="primary" id="savePropBtn">Salvar imóvel</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="/js/painel.js"></script>
+</body></html>

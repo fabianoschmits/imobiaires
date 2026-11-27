@@ -339,9 +339,9 @@ function openAgency() {
     openDialog('agencyAuthDialog');
     return;
   }
-  $('agencySessionInfo').textContent = 'Conectado como ' + session.name + ' (' + session.email + ')';
-  $('mineCount').textContent = mine.length;
-  $('offerCount').textContent = extra.length;
+  // Logged in → go to dashboard
+  window.location.href = '/painel.html';
+}
   $('mineList').innerHTML = mine.length
     ? mine
         .map(
@@ -595,7 +595,7 @@ $('loginForm').onsubmit = (e) => {
   }
   writeStorage('session', { name: acc.name, email: acc.email, phone: acc.phone || '' }, toast);
   closeDialog('agencyAuthDialog');
-  openAgency();
+  window.location.href = '/painel.html';
   toast('Bem-vindo, ' + acc.name + '!');
 };
 $('registerForm').onsubmit = (e) => {
@@ -616,7 +616,7 @@ $('registerForm').onsubmit = (e) => {
   if (!writeStorage('accounts', [...accounts, acc], toast)) return;
   writeStorage('session', { name: acc.name, email: acc.email, phone: acc.phone }, toast);
   closeDialog('agencyAuthDialog');
-  openAgency();
+  window.location.href = '/painel.html';
   toast('Conta criada com sucesso!');
 };
 $('agencyLogout').onclick = () => {
