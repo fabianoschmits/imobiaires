@@ -125,7 +125,7 @@ function render() {
     sort: $('sort').value,
   });
 
-  $('count').textContent = list.length + ' ' + (list.length === 1 ? 'imÃ³vel' : 'imÃ³veis');
+  $('count').textContent = list.length + ' ' + (list.length === 1 ? 'imóvel' : 'imóveis');
   $('savedCount').textContent = fav.size ? '(' + fav.size + ')' : '';
   $('compareCount').textContent = comp.size ? '(' + comp.size + ')' : '';
   $('dockText').textContent = comp.size + ' de 3 selecionados';
@@ -148,11 +148,11 @@ function render() {
             (fav.has(p.id) ? 'on' : '') +
             '" data-fav="' +
             p.id +
-            '" aria-label="Salvar imÃ³vel">' +
+            '" aria-label="Salvar imóvel">' +
             icon(fav.has(p.id) ? 'heartFilled' : 'heart') +
             '</button></div><div class="cardbody"><div class="price">' +
             money(getMinPrice(p)) +
-            (p.deal === 'Aluguel' ? '<small>/mÃªs</small>' : '') +
+            (p.deal === 'Aluguel' ? '<small>/mês</small>' : '') +
             '</div><h3 data-open="' +
             p.id +
             '" tabindex="0" role="button">' +
@@ -161,18 +161,18 @@ function render() {
             icon('pin') +
             '<span>' +
             esc(p.district) +
-            ' Â· VenÃ¢ncio Aires</span></div><div class="facts"><span>' +
+            ' · Venâncio Aires</span></div><div class="facts"><span>' +
             fmt(p.area) +
-            ' mÂ²</span>' +
-            (p.front ? '<span>' + fmt(p.front) + ' Ã— ' + fmt(p.depth) + ' m</span>' : '') +
+            ' m²</span>' +
+            (p.front ? '<span>' + fmt(p.front) + ' × ' + fmt(p.depth) + ' m</span>' : '') +
             (p.beds ? '<span>' + p.beds + ' quartos</span>' : '') +
             '<span>' +
             money(getMinPrice(p) / p.area) +
-            '/mÂ²</span></div><div class="cardbottom"><span class="offers">' +
+            '/m²</span></div><div class="cardbottom"><span class="offers">' +
             p.offers.length +
             ' ' +
             (p.offers.length === 1 ? 'oferta' : 'ofertas') +
-            (p.is_demo ? ' Â· Demo' : '') +
+            (p.is_demo ? ' · Demo' : '') +
             '</span><button type="button" class="comparebtn ' +
             (comp.has(p.id) ? 'on' : '') +
             '" data-comp="' +
@@ -182,7 +182,7 @@ function render() {
             '</button></div></div></article>'
         )
         .join('')
-    : '<div class="empty"><strong>Nenhum imÃ³vel encontrado</strong><p>Experimente limpar os filtros ou ampliar a Ã¡rea do mapa.</p><button type="button" class="secondary" id="emptyReset">Limpar busca</button></div>';
+    : '<div class="empty"><strong>Nenhum imóvel encontrado</strong><p>Experimente limpar os filtros ou ampliar a área do mapa.</p><button type="button" class="secondary" id="emptyReset">Limpar busca</button></div>';
 
   mapCtrl.renderMarkers(filtered, active);
 }
@@ -215,9 +215,9 @@ function select(id, fly = true) {
         '<div class="offerrow">' +
         '<div>' +
         (i === 0 ? '<span class="offer-badge">Menor oferta</span>' : '<small>Oferta ' + (i + 1) + '</small>') +
-        '<strong>' + logoImg + agencyTitle + creciTag + (isMine ? ' Â· <em style="color:var(--blue);font-style:normal">sua oferta</em>' : '') + '</strong>' +
+        '<strong>' + logoImg + agencyTitle + creciTag + (isMine ? ' · <em style="color:var(--blue);font-style:normal">sua oferta</em>' : '') + '</strong>' +
         (isMine
-          ? '<button type="button" class="offer-edit-btn" data-edit-offer="' + p.id + '" data-offer-idx="' + i + '" title="Clique para editar seu preÃ§o">' + money(o.price) + ' ' + icon('edit') + '</button>'
+          ? '<button type="button" class="offer-edit-btn" data-edit-offer="' + p.id + '" data-offer-idx="' + i + '" title="Clique para editar seu preço">' + money(o.price) + ' ' + icon('edit') + '</button>'
           : '<span class="offer-price">' + money(o.price) + '</span>') +
         '</div>' +
         (isMine
@@ -241,7 +241,7 @@ function select(id, fly = true) {
 
   const carouselControls = photos.length > 1
     ? '<button type="button" class="hero-nav hero-prev" id="heroPrev" aria-label="Foto anterior">' + icon('chevronLeft') + '</button>' +
-      '<button type="button" class="hero-nav hero-next" id="heroNext" aria-label="PrÃ³xima foto">' + icon('chevronRight') + '</button>' +
+      '<button type="button" class="hero-nav hero-next" id="heroNext" aria-label="Próxima foto">' + icon('chevronRight') + '</button>' +
       '<span class="hero-count" id="heroCount">1 / ' + photos.length + '</span>'
     : '';
 
@@ -249,26 +249,26 @@ function select(id, fly = true) {
     '<div class="detailbody"><button type="button" class="back" id="backList">' + icon('back') + ' Voltar aos resultados</button><div class="heroimg">' +
     heroMediaHtml +
     carouselControls +
-    '<span class="tag">' + esc(p.type) + ' Â· ' + esc(p.deal) + '</span>' +
+    '<span class="tag">' + esc(p.type) + ' · ' + esc(p.deal) + '</span>' +
     '</div><div class="eyebrow" style="margin-top:14px">Ref. ' +
-    esc(p.id) + (p.is_demo ? ' Â· Demonstrativo' : '') + '</div><h2 class="detailtitle">' + esc(p.title) + '</h2><div class="loc">' + icon('pin') + '<span>' +
-    esc(p.district) + ' Â· VenÃ¢ncio Aires, RS</span></div><div style="margin-top:12px" class="muted">' +
-    (p.offers.length > 1 ? 'A partir de' : 'PreÃ§o anunciado') +
-    '</div><div class="price detailprice">' + money(getMinPrice(p)) + (p.deal === 'Aluguel' ? '<small>/mÃªs</small>' : '') +
-    '</div><div class="statstrip"><div><small>Ãrea</small><strong>' + fmt(p.area) + ' mÂ²</strong></div><div><small>Valor por mÂ²</small><strong>' +
+    esc(p.id) + (p.is_demo ? ' · Demonstrativo' : '') + '</div><h2 class="detailtitle">' + esc(p.title) + '</h2><div class="loc">' + icon('pin') + '<span>' +
+    esc(p.district) + ' · Venâncio Aires, RS</span></div><div style="margin-top:12px" class="muted">' +
+    (p.offers.length > 1 ? 'A partir de' : 'Preço anunciado') +
+    '</div><div class="price detailprice">' + money(getMinPrice(p)) + (p.deal === 'Aluguel' ? '<small>/mês</small>' : '') +
+    '</div><div class="statstrip"><div><small>Área</small><strong>' + fmt(p.area) + ' m²</strong></div><div><small>Valor por m²</small><strong>' +
     money(getMinPrice(p) / p.area) + '</strong></div><div><small>' +
-    (p.front ? 'DimensÃµes' : 'Ofertas') + '</small><strong>' +
-    (p.front ? fmt(p.front) + ' Ã— ' + fmt(p.depth) + ' m' : p.offers.length) +
+    (p.front ? 'Dimensões' : 'Ofertas') + '</small><strong>' +
+    (p.front ? fmt(p.front) + ' × ' + fmt(p.depth) + ' m' : p.offers.length) +
     '</strong></div></div><div class="detailactions"><button type="button" class="secondary" data-fav="' + p.id + '">' +
     icon(fav.has(p.id) ? 'heartFilled' : 'heart') + (fav.has(p.id) ? ' Salvo' : ' Salvar') + '</button><button type="button" class="secondary" data-comp="' + p.id + '">' +
     icon('compare') + (comp.has(p.id) ? ' Comparando' : ' Comparar') + '</button><button type="button" class="secondary" id="shareProp">' + icon('share') + ' Compartilhar</button></div>' +
-    '<h3>Sobre o imÃ³vel</h3><p>' + esc(p.description) + '</p>' +
+    '<h3>Sobre o imóvel</h3><p>' + esc(p.description) + '</p>' +
     '<h3>Compare as ' + p.offers.length + ' ofertas</h3>' +
     offersHtml +
     (p.offers.length > 1
-      ? '<p class="muted">DiferenÃ§a entre ofertas: <strong>' + money(p.offers.at(-1).price - getMinPrice(p)) + '</strong></p>'
+      ? '<p class="muted">Diferença entre ofertas: <strong>' + money(p.offers.at(-1).price - getMinPrice(p)) + '</strong></p>'
       : '') +
-    (p.is_demo ? '<p class="muted" style="margin-top:14px">AnÃºncio demonstrativo para visualizaÃ§Ã£o da plataforma.</p>' : '') +
+    (p.is_demo ? '<p class="muted" style="margin-top:14px">Anúncio demonstrativo para visualização da plataforma.</p>' : '') +
     '</div>';
 
   if (photos.length > 1) {
@@ -305,7 +305,7 @@ function toggleFav(id) {
   else next.add(id);
   if (writeStorage('fav', [...next], toast)) {
     fav = next;
-    toast(fav.has(id) ? 'ImÃ³vel salvo' : 'Removido dos salvos');
+    toast(fav.has(id) ? 'Imóvel salvo' : 'Removido dos salvos');
     refreshDetail();
   }
 }
@@ -313,7 +313,7 @@ function toggleFav(id) {
 function toggleComp(id) {
   if (comp.has(id)) comp.delete(id);
   else if (comp.size >= 3) {
-    toast('Selecione atÃ© 3 imÃ³veis');
+    toast('Selecione até 3 imóveis');
     return;
   } else comp.add(id);
   refreshDetail();
@@ -334,10 +334,10 @@ function switchMode(v) {
   $('explore').classList.toggle('active', v === 'all');
   $('saved').classList.toggle('active', v === 'saved');
   $('heading').textContent =
-    v === 'saved' ? 'Seus imÃ³veis salvos.' : 'Encontre seu prÃ³ximo endereÃ§o.';
+    v === 'saved' ? 'Seus imóveis salvos.' : 'Encontre seu próximo endereço.';
   $('subheading').textContent =
     v === 'saved'
-      ? 'Volte Ã s suas oportunidades favoritas.'
+      ? 'Volte às suas oportunidades favoritas.'
       : 'Explore o mapa e compare as melhores oportunidades.';
   if (v === 'saved') $('within').checked = false;
   hideDetail();
@@ -347,23 +347,23 @@ function switchMode(v) {
 function compare() {
   const a = all().filter((p) => comp.has(p.id));
   if (a.length < 2) {
-    toast('Selecione pelo menos 2 imÃ³veis para comparar');
+    toast('Selecione pelo menos 2 imóveis para comparar');
     return;
   }
   const rows = [
-    ['PreÃ§o', (p) => money(getMinPrice(p)) + (p.deal === 'Aluguel' ? '/mÃªs' : '')],
+    ['Preço', (p) => money(getMinPrice(p)) + (p.deal === 'Aluguel' ? '/mês' : '')],
     ['Tipo', (p) => p.type],
-    ['NegociaÃ§Ã£o', (p) => p.deal],
+    ['Negociação', (p) => p.deal],
     ['Bairro', (p) => p.district],
-    ['Ãrea', (p) => fmt(p.area) + ' mÂ²'],
-    ['PreÃ§o por mÂ²', (p) => money(getMinPrice(p) / p.area)],
-    ['DimensÃµes', (p) => (p.front ? fmt(p.front) + ' Ã— ' + fmt(p.depth) + ' m' : 'NÃ£o informado')],
-    ['Quartos', (p) => p.beds || 'â€”'],
+    ['Área', (p) => fmt(p.area) + ' m²'],
+    ['Preço por m²', (p) => money(getMinPrice(p) / p.area)],
+    ['Dimensões', (p) => (p.front ? fmt(p.front) + ' × ' + fmt(p.depth) + ' m' : 'Não informado')],
+    ['Quartos', (p) => p.beds || '—'],
     ['Ofertas', (p) => p.offers.length],
     ['Menor oferta', (p) => p.offers[0].agency],
   ];
   $('compareTable').innerHTML =
-    '<div class="tablewrap"><table><thead><tr><th>CaracterÃ­stica</th>' +
+    '<div class="tablewrap"><table><thead><tr><th>Característica</th>' +
     a.map((p) => '<th>' + esc(p.title) + '</th>').join('') +
     '</tr></thead><tbody>' +
     rows
@@ -398,7 +398,7 @@ function openAgency() {
 function openOffer(id) {
   const session = readStorage('session', null);
   $('offerProperty').innerHTML = all()
-    .map((p) => '<option value="' + p.id + '">' + esc(p.id + ' â€” ' + p.title) + '</option>')
+    .map((p) => '<option value="' + p.id + '">' + esc(p.id + ' — ' + p.title) + '</option>')
     .join('');
   $('offerForm').reset();
   if (session?.name) $('offerForm').elements.agency.value = session.name;
@@ -419,7 +419,7 @@ function newProp() {
   if (session?.name) $('propertyForm').elements.agency.value = session.name;
   photoData = '';
   draftLocation = null;
-  $('locationStatus').textContent = 'LocalizaÃ§Ã£o pendente';
+  $('locationStatus').textContent = 'Localização pendente';
   openDialog('propertyDialog');
 }
 
@@ -428,7 +428,7 @@ async function copyText(t) {
     await navigator.clipboard.writeText(t);
     toast('Copiado!');
   } catch {
-    toast('NÃ£o foi possÃ­vel copiar neste navegador.');
+    toast('Não foi possível copiar neste navegador.');
   }
 }
 
@@ -462,20 +462,20 @@ document.addEventListener('click', (e) => {
     const p = all().find((x) => x.id === active);
     const o = p.offers[Number(b.dataset.contact)];
     contactMessage =
-      'OlÃ¡! Tenho interesse no imÃ³vel ' +
+      'Olá! Tenho interesse no imóvel ' +
       p.id +
-      ' â€” ' +
+      ' — ' +
       p.title +
       ' (' +
       p.district +
       ', ' +
       fmt(p.area) +
-      ' mÂ²), anunciado por ' +
+      ' m²), anunciado por ' +
       money(o.price) +
-      (p.deal === 'Aluguel' ? '/mÃªs' : '') +
-      '. Poderia me enviar mais informaÃ§Ãµes?';
+      (p.deal === 'Aluguel' ? '/mês' : '') +
+      '. Poderia me enviar mais informações?';
     $('contactText').textContent = contactMessage;
-    const waMessage = contactMessage + '\n\nâ€” Enviado via ImobiAires: https://imobiaires.vercel.app';
+    const waMessage = contactMessage + '\n\n— Enviado via ImobiAires: https://imobiaires.vercel.app';
     const accounts = readStorage('accounts', []);
     const matchedAcc = accounts.find(
       (a) => a.name.toLowerCase() === String(o.agency || '').toLowerCase()
@@ -492,13 +492,13 @@ document.addEventListener('click', (e) => {
       waBtn.hidden = true;
       waBtn.removeAttribute('href');
       $('contactNote').textContent =
-        'ImobiliÃ¡ria demonstrativa sem WhatsApp cadastrado. Use "Copiar mensagem" para testar.';
+        'Imobiliária demonstrativa sem WhatsApp cadastrado. Use "Copiar mensagem" para testar.';
     }
     openDialog('contactDialog');
     return;
   }
   if (b.dataset.delete) {
-    if (!confirm('Excluir este anÃºncio demonstrativo?')) return;
+    if (!confirm('Excluir este anúncio demonstrativo?')) return;
     const next = mine.filter((p) => p.id !== b.dataset.delete);
     if (!writeStorage('mine', next, toast)) return;
     mine = next;
@@ -594,7 +594,7 @@ $('filterForm').onsubmit = (e) => {
   f.negocio = $('negocio').value;
   f.multiOffer = $('multiOffer').checked;
   if ((f.maxPrice && f.minPrice > f.maxPrice) || (f.maxArea && f.minArea > f.maxArea)) {
-    toast('O valor mÃ­nimo nÃ£o pode superar o mÃ¡ximo');
+    toast('O valor mínimo não pode superar o máximo');
     return;
   }
   filters = f;
@@ -639,7 +639,7 @@ window.addEventListener('resize', () => mapCtrl.invalidateSize());
     }
   } catch (err) {
     // Fall back to seed data silently
-    console.warn('ImobiAires: usando dados locais (Supabase indisponÃ­vel):', err.message);
+    console.warn('ImobiAires: usando dados locais (Supabase indisponível):', err.message);
   }
 })();
 
@@ -679,7 +679,7 @@ function renderSuggestions() {
         kind: 'property',
         value: p.id,
         label: p.title,
-        meta: p.district + ' Â· ' + p.id,
+        meta: p.district + ' · ' + p.id,
       })
     );
 
