@@ -16,14 +16,17 @@ export function createMapController({ onRender, onSelect, onMapError, onMapClick
       onMapError(true);
       return null;
     }
-    map = L.map('map', { zoomControl: false, maxZoom: 20 }).setView(CENTER, 14);
+    // maxZoom 22 ≈ ~50 m de escala; maxNativeZoom mantém o tile real
+    // O Leaflet faz overzoom (estica o tile existente) dos níveis 20–22
+    map = L.map('map', { zoomControl: false, maxZoom: 22 }).setView(CENTER, 14);
     satLayer = L.tileLayer(MAP_PROVIDERS.satellite.url, {
-      maxZoom: MAP_PROVIDERS.satellite.maxZoom,
-      maxNativeZoom: MAP_PROVIDERS.satellite.maxNativeZoom,
+      maxZoom: 22,
+      maxNativeZoom: MAP_PROVIDERS.satellite.maxNativeZoom, // 19
       attribution: MAP_PROVIDERS.satellite.attribution,
     });
     streetLayer = L.tileLayer(MAP_PROVIDERS.street.url, {
-      maxZoom: MAP_PROVIDERS.street.maxZoom,
+      maxZoom: 22,
+      maxNativeZoom: 19,
       attribution: MAP_PROVIDERS.street.attribution,
     });
 
@@ -103,7 +106,7 @@ export function createMapController({ onRender, onSelect, onMapError, onMapClick
   }
 
   function flyTo(lat, lng) {
-    if (map) map.flyTo([lat, lng], Math.max(map.getZoom(), 17), { duration: 0.55 });
+    if (map) map.flyTo([lat, lng], Math.max(map.getZoom(), 18), { duration: 0.55 });
   }
 
   function centerCity() {

@@ -8,8 +8,8 @@ export const MAP_PROVIDERS = {
     attribution:
       window.__IMOBIAIRES_CONFIG__?.satelliteAttribution ||
       'Tiles © Esri — Esri, Maxar, Earthstar Geographics, GIS User Community',
-    maxZoom: 20,
-    maxNativeZoom: 19,
+    maxZoom: 22,        // overzoom permitido
+    maxNativeZoom: 19,  // tiles reais existem até zoom 19
   },
   street: {
     url:
@@ -18,7 +18,8 @@ export const MAP_PROVIDERS = {
     attribution:
       window.__IMOBIAIRES_CONFIG__?.streetAttribution ||
       '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 19,
+    maxZoom: 22,        // overzoom permitido
+    maxNativeZoom: 19,  // OSM tiles nativos até zoom 19
   },
 };
 
