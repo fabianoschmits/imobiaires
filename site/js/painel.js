@@ -312,7 +312,19 @@ document.addEventListener('click', async (e) => {
   if (b.id === 'clearMapPts') { mapPoints = []; renderMapDraw(); return; }
 });
 
-/* ─── Auth tab switching ─── */
+/* ─── Auth tab switching & password toggle ─── */
+document.querySelectorAll('.pw-toggle').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const input = btn.previousElementSibling;
+    if (!input) return;
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.classList.toggle('active', show);
+    btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+    btn.setAttribute('title', show ? 'Ocultar senha' : 'Mostrar senha');
+  });
+});
+
 $('authTabLogin').onclick = () => {
   $('authTabLogin').classList.add('active');
   $('authTabRegister').classList.remove('active');

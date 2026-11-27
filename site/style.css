@@ -595,7 +595,9 @@ dialog textarea {
 .search-suggest small{font-size:11px;color:#65738a;font-weight:600;flex-shrink:0}
 .panel-handle{display:none}
 @media(max-width:760px){.panel-handle{display:flex;justify-content:center;align-items:center;padding:10px 0 4px;cursor:grab;touch-action:none;position:sticky;top:0;background:#fff;z-index:5}.panel-handle span{width:40px;height:4px;border-radius:999px;background:#cbd5e1}}
-@media(max-width:760px){.search input{font-size:16px}}
+@media(max-width:760px){
+  .search input, input, select, textarea { font-size:16px !important; }
+}
 .search-suggest button{padding:7px 10px;font-size:12px}
 .search-suggest small{font-size:10px}
 .search input::placeholder{font-size:inherit}

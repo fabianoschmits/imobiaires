@@ -17,19 +17,29 @@
       <button type="button" id="authTabRegister" class="chip">Criar conta</button>
     </div>
     <form id="loginForm">
-      <label>E-mail<input name="email" type="email" required placeholder="contato@imobiliaria.com"></label>
-      <label>Senha<input name="password" type="password" required minlength="4" placeholder="••••••"></label>
-      <button class="primary" style="width:100%;margin-top:8px">Entrar</button>
+      <label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="contato@imobiliaria.com"></label>
+      <label>Senha
+        <div class="pw-wrap">
+          <input name="password" type="password" required minlength="4" autocomplete="current-password" placeholder="••••••••">
+          <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">👁</button>
+        </div>
+      </label>
+      <button class="primary auth-submit">Entrar</button>
     </form>
     <form id="registerForm" hidden>
-      <label>Nome da imobiliária<input name="name" required maxlength="60" placeholder="Ex.: Imobiliária Centro"></label>
-      <label>E-mail<input name="email" type="email" required placeholder="contato@imobiliaria.com"></label>
-      <label>WhatsApp (opcional)<input name="phone" maxlength="20" placeholder="(51) 99999-9999"></label>
-      <label>Senha<input name="password" type="password" required minlength="4" placeholder="Mínimo 4 caracteres"></label>
-      <button class="primary" style="width:100%;margin-top:8px">Criar conta e entrar</button>
+      <label>Nome da imobiliária<input name="name" required maxlength="60" autocomplete="organization" placeholder="Ex.: Imobiliária Centro"></label>
+      <label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="contato@imobiliaria.com"></label>
+      <label>WhatsApp (opcional)<input name="phone" type="tel" maxlength="20" autocomplete="tel" placeholder="(51) 99999-9999"></label>
+      <label>Senha
+        <div class="pw-wrap">
+          <input name="password" type="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+          <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">👁</button>
+        </div>
+      </label>
+      <button class="primary auth-submit">Criar conta e entrar</button>
     </form>
     <div id="authError" class="auth-error" hidden></div>
-    <p class="muted" style="font-size:11px;text-align:center;margin-top:16px">Os dados ficam salvos neste navegador. Demonstração — sem servidor real.</p>
+    <p class="muted" style="font-size:11px;text-align:center;margin-top:16px">Acesso seguro via Supabase. Seus anúncios ficam salvos na nuvem.</p>
   </div>
 </div>
 
