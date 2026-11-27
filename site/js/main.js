@@ -77,7 +77,10 @@ const mapCtrl = createMapController({
     $('mapError').hidden = !show;
   },
   onMapClick: () => {
-    if (active) hideDetail();
+    if (active) {
+      hideDetail();
+      if (isMobile()) setPanel(false);
+    }
   },
 });
 
