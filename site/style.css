@@ -599,3 +599,5 @@ dialog textarea {
 .search-suggest button{padding:7px 10px;font-size:12px}
 .search-suggest small{font-size:10px}
 .search input::placeholder{font-size:inherit}
+.offer-edit-btn{background:none;border:none;color:#17634f;font-weight:750;font-size:inherit;cursor:pointer;padding:0;text-decoration:underline dotted;text-underline-offset:3px}
+.offer-edit-btn:hover{color:#2255d4}

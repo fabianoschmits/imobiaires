@@ -173,69 +173,64 @@ function select(id, fly = true) {
   const p = all().find((x) => x.id === id);
   if (!p) return;
   active = id;
+  const session = readStorage('session', null);
   if (fly) mapCtrl.flyTo(p.lat, p.lng);
   q('.panelhead').hidden = true;
   $('cards').hidden = true;
   $('detail').hidden = false;
+
+  const myOfferIdx = session
+    ? p.offers.findIndex((o) => o.agency.toLowerCase() === session.name.toLowerCase())
+    : -1;
+
+  const offersHtml = p.offers
+    .map((o, i) => {
+      const isMine = i === myOfferIdx;
+      return (
+        '<div class="offerrow">' +
+        '<div>' +
+        '<small>' + (i === 0 ? 'MENOR PREÇO' : 'OFERTA ' + (i + 1)) + '</small>' +
+        '<strong>' + esc(o.agency) + (isMine ? ' · <em style="color:#2255d4;font-style:normal">sua oferta</em>' : '') + '</strong>' +
+        (isMine
+          ? '<button class="offer-edit-btn" data-edit-offer="' + p.id + '" data-offer-idx="' + i + '" title="Clique para editar seu preço">' + money(o.price) + ' <span style="font-size:12px">✎</span></button>'
+          : '<strong style="color:#17634f">' + money(o.price) + '</strong>') +
+        '</div>' +
+        (isMine
+          ? '<span class="muted" style="font-size:11px;align-self:center">Clique no valor para editar</span>'
+          : '<button class="primary" data-contact="' + i + '">Contato ↗</button>') +
+        '</div>'
+      );
+    })
+    .join('');
+
+  const hasMyOffer = myOfferIdx !== -1;
+
   $('detail').innerHTML =
     '<div class="detailbody"><button class="back" id="backList">← Voltar aos resultados</button><div class="heroimg">' +
     renderIllustration(p) +
-    '<span class="tag">' +
-    esc(p.type) +
-    ' · ' +
-    esc(p.deal) +
-    '</span><span class="photoLabel">Imagem demonstrativa</span></div><div class="eyebrow" style="margin-top:14px">REFERÊNCIA ' +
-    esc(p.id) +
-    ' · DEMONSTRAÇÃO</div><h2 class="detailtitle">' +
-    esc(p.title) +
-    '</h2><div class="loc">⌖ ' +
-    esc(p.district) +
-    ' · Venâncio Aires, RS</div><div style="margin-top:12px" class="muted">' +
+    '<span class="tag">' + esc(p.type) + ' · ' + esc(p.deal) + '</span><span class="photoLabel">Imagem demonstrativa</span></div><div class="eyebrow" style="margin-top:14px">REFERÊNCIA ' +
+    esc(p.id) + ' · DEMONSTRAÇÃO</div><h2 class="detailtitle">' + esc(p.title) + '</h2><div class="loc">⌖ ' +
+    esc(p.district) + ' · Venâncio Aires, RS</div><div style="margin-top:12px" class="muted">' +
     (p.offers.length > 1 ? 'A partir de' : 'Preço anunciado') +
-    '</div><div class="price detailprice">' +
-    money(getMinPrice(p)) +
-    (p.deal === 'Aluguel' ? '/mês' : '') +
-    '</div><div class="statstrip"><div><small>Área informada</small><strong>' +
-    fmt(p.area) +
-    ' m²</strong></div><div><small>Valor por m²</small><strong>' +
-    money(getMinPrice(p) / p.area) +
-    '</strong></div><div><small>' +
-    (p.front ? 'Dimensões' : 'Ofertas') +
-    '</small><strong>' +
+    '</div><div class="price detailprice">' + money(getMinPrice(p)) + (p.deal === 'Aluguel' ? '/mês' : '') +
+    '</div><div class="statstrip"><div><small>Área informada</small><strong>' + fmt(p.area) + ' m²</strong></div><div><small>Valor por m²</small><strong>' +
+    money(getMinPrice(p) / p.area) + '</strong></div><div><small>' +
+    (p.front ? 'Dimensões' : 'Ofertas') + '</small><strong>' +
     (p.front ? fmt(p.front) + ' × ' + fmt(p.depth) + ' m' : p.offers.length) +
-    '</strong></div></div><div class="detailactions"><button class="secondary" data-fav="' +
-    p.id +
-    '">' +
-    (fav.has(p.id) ? '♥ Salvo' : '♡ Salvar') +
-    '</button><button class="secondary" data-comp="' +
-    p.id +
-    '">' +
-    (comp.has(p.id) ? '✓ Comparando' : '＋ Comparar') +
-    '</button><button class="secondary" id="shareProp">↗ Compartilhar</button></div><h3>Sobre o imóvel</h3><p>' +
-    esc(p.description) +
-    '</p><h3>Compare as ' +
-    p.offers.length +
-    ' ofertas</h3>' +
-    p.offers
-      .map(
-        (o, i) =>
-          '<div class="offerrow"><div><small>' +
-          (i === 0 ? 'MENOR PREÇO' : 'OFERTA ' + (i + 1)) +
-          '</small><strong>' +
-          esc(o.agency) +
-          '</strong><strong style="color:#17634f">' +
-          money(o.price) +
-          '</strong></div><button class="primary" data-contact="' +
-          i +
-          '">Contato ↗</button></div>'
-      )
-      .join('') +
+    '</strong></div></div><div class="detailactions"><button class="secondary" data-fav="' + p.id + '">' +
+    (fav.has(p.id) ? '♥ Salvo' : '♡ Salvar') + '</button><button class="secondary" data-comp="' + p.id + '">' +
+    (comp.has(p.id) ? '✓ Comparando' : '＋ Comparar') + '</button><button class="secondary" id="shareProp">↗ Compartilhar</button></div>' +
+    '<h3>Sobre o imóvel</h3><p>' + esc(p.description) + '</p>' +
+    '<h3>Compare as ' + p.offers.length + ' ofertas</h3>' +
+    offersHtml +
     (p.offers.length > 1
-      ? '<p class="muted">Diferença entre ofertas: <strong>' +
-        money(p.offers.at(-1).price - getMinPrice(p)) +
-        '</strong></p>'
+      ? '<p class="muted">Diferença entre ofertas: <strong>' + money(p.offers.at(-1).price - getMinPrice(p)) + '</strong></p>'
       : '') +
-    '<button class="secondary" id="offerHere">＋ Adicionar oferta neste imóvel</button><p class="muted" style="margin-top:15px">Endereço, medidas e limites de exemplo não são cadastrais. Anúncio fictício.</p></div>';
+    (!hasMyOffer
+      ? '<button class="secondary" id="offerHere">＋ Adicionar oferta neste imóvel</button>'
+      : '') +
+    '<p class="muted" style="margin-top:15px">Endereço, medidas e limites de exemplo não são cadastrais. Anúncio fictício.</p></div>';
+
   showDetailPanel();
   $('panel').scrollTop = 0;
   render();
@@ -373,7 +368,14 @@ function openOffer(id) {
     .join('');
   $('offerForm').reset();
   if (session?.name) $('offerForm').elements.agency.value = session.name;
-  if (id) $('offerProperty').value = id;
+  if (id) {
+    $('offerProperty').value = id;
+    // pre-fill price if agency already has an offer
+    const existing = all()
+      .find((p) => p.id === id)
+      ?.offers.find((o) => session && o.agency.toLowerCase() === session.name.toLowerCase());
+    if (existing) $('offerForm').elements.price.value = existing.price;
+  }
   openDialog('offerDialog');
 }
 
@@ -706,14 +708,51 @@ $('offerForm').onsubmit = (e) => {
   e.preventDefault();
   const session = readStorage('session', null);
   const f = Object.fromEntries(new FormData(e.target));
-  const next = [
-    ...extra,
-    { id: f.id, agency: f.agency, price: +f.price, phone: session?.phone || '' },
-  ];
+  const agencyName = f.agency;
+  const propId = f.id;
+  const newPrice = +f.price;
+  const phone = session?.phone || '';
+
+  // Update existing offer if same agency already has one for this property
+  const alreadyInMine = mine.find((p) => p.id === propId)?.offers
+    .findIndex((o) => o.agency.toLowerCase() === agencyName.toLowerCase());
+  if (alreadyInMine !== undefined && alreadyInMine >= 0) {
+    const nextMine = mine.map((p) => {
+      if (p.id !== propId) return p;
+      const updatedOffers = p.offers.map((o, i) =>
+        i === alreadyInMine ? { ...o, price: newPrice, phone } : o
+      );
+      return { ...p, offers: updatedOffers };
+    });
+    if (!writeStorage('mine', nextMine, toast)) return;
+    mine = nextMine;
+    closeDialog('offerDialog');
+    select(propId);
+    toast('Oferta atualizada!');
+    return;
+  }
+
+  const alreadyInExtra = extra.findIndex(
+    (o) => o.id === propId && o.agency.toLowerCase() === agencyName.toLowerCase()
+  );
+  if (alreadyInExtra >= 0) {
+    const nextExtra = extra.map((o, i) =>
+      i === alreadyInExtra ? { ...o, price: newPrice, phone } : o
+    );
+    if (!writeStorage('offers', nextExtra, toast)) return;
+    extra = nextExtra;
+    closeDialog('offerDialog');
+    select(propId);
+    toast('Oferta atualizada!');
+    return;
+  }
+
+  // New offer
+  const next = [...extra, { id: propId, agency: agencyName, price: newPrice, phone }];
   if (!writeStorage('offers', next, toast)) return;
   extra = next;
   closeDialog('offerDialog');
-  select(f.id);
+  select(propId);
   toast('Oferta adicionada!');
 };
 
