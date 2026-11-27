@@ -16,6 +16,7 @@
       <button type="button" id="authTabLogin" class="chip active">Entrar</button>
       <button type="button" id="authTabRegister" class="chip">Criar conta</button>
     </div>
+    <div id="authError" class="auth-error" hidden style="margin-bottom:14px;margin-top:0"></div>
     <form id="loginForm" novalidate>
       <label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="contato@imobiliaria.com"></label>
       <label>Senha
@@ -24,7 +25,7 @@
           <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">👁</button>
         </div>
       </label>
-      <button class="primary auth-submit">Entrar</button>
+      <button type="submit" class="primary auth-submit">Entrar</button>
     </form>
     <form id="registerForm" hidden novalidate>
       <label>Nome da imobiliária<input name="name" required maxlength="60" autocomplete="organization" placeholder="Ex.: Imobiliária Centro"></label>
@@ -36,9 +37,8 @@
           <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">👁</button>
         </div>
       </label>
-      <button class="primary auth-submit">Criar conta e entrar</button>
+      <button type="submit" class="primary auth-submit">Criar conta e entrar</button>
     </form>
-    <div id="authError" class="auth-error" hidden></div>
     <p class="muted" style="font-size:11px;text-align:center;margin-top:16px">Acesso seguro via Supabase. Seus anúncios ficam salvos na nuvem.</p>
   </div>
 </div>

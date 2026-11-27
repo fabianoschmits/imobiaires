@@ -22,6 +22,7 @@ function showError(msg) {
   const el = $('authError');
   el.textContent = msg;
   el.hidden = !msg;
+  if (msg) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function openDialog(id) { const d=$(id); if(!d.open) d.showModal(); }
