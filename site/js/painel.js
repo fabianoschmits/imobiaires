@@ -346,7 +346,7 @@ $('loginForm').onsubmit = async (e) => {
   const btn = e.target.querySelector('button[type=submit]');
   btn.disabled = true; btn.textContent = 'Entrando...';
   try {
-    session = await signIn(f.email, f.password);
+    session = await signIn(f.email.trim(), f.password);
     writeStorage('sb-session', session);
     adminMode = session.user?.email === ADMIN_EMAIL;
     myAgency = await getMyAgency(session);
@@ -365,7 +365,7 @@ $('registerForm').onsubmit = async (e) => {
   const btn = e.target.querySelector('button[type=submit]');
   btn.disabled = true; btn.textContent = 'Criando conta...';
   try {
-    session = await signUp(f.email, f.password, f.name, f.phone);
+    session = await signUp(f.email.trim(), f.password, f.name.trim(), f.phone?.trim());
     writeStorage('sb-session', session);
     if (session?.access_token) {
       myAgency = await createAgency(session, { name: f.name, phone: f.phone || '' });
