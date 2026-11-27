@@ -342,24 +342,6 @@ function openAgency() {
   // Logged in → go to dashboard
   window.location.href = '/painel.html';
 }
-  $('mineList').innerHTML = mine.length
-    ? mine
-        .map(
-          (p) =>
-            '<div class="mineRow"><div><strong>' +
-            esc(p.title) +
-            '</strong><br><span class="muted">' +
-            esc(p.district) +
-            ' · ' +
-            money(p.offers[0].price) +
-            '</span></div><button class="secondary" data-delete="' +
-            p.id +
-            '">Excluir</button></div>'
-        )
-        .join('')
-    : '<p class="muted">Nenhum imóvel cadastrado por você ainda.</p>';
-  openDialog('agencyDialog');
-}
 
 function openOffer(id) {
   const session = readStorage('session', null);
