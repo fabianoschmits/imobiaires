@@ -53,6 +53,9 @@ export function fromSupabaseRow(row) {
         : [],
     photo: row.photo_url || null,
     photo_url: row.photo_url || null,
+    photos: Array.isArray(row.photos) && row.photos.length
+      ? row.photos
+      : (row.photo_url ? [row.photo_url] : []),
     offers: offers.length > 0 ? offers : [{ agency: '—', price: 0 }],
     mine: false,
     is_demo: row.is_demo || false,

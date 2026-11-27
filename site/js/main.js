@@ -232,10 +232,28 @@ function select(id, fly = true) {
 
   const hasMyOffer = myOfferIdx !== -1;
 
+  const photos = Array.isArray(p.photos) && p.photos.length
+    ? p.photos
+    : (p.photo_url ? [p.photo_url] : []);
+  let photoIdx = 0;
+
+  const heroMediaHtml = photos.length > 0
+    ? '<img id="heroSlideImg" src="' + esc(photos[0]) + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;display:block">'
+    : renderIllustration(p);
+
+  const carouselControls = photos.length > 1
+    ? '<button type="button" class="hero-nav hero-prev" id="heroPrev" aria-label="Foto anterior">‹</button>' +
+      '<button type="button" class="hero-nav hero-next" id="heroNext" aria-label="Próxima foto">›</button>' +
+      '<span class="hero-count" id="heroCount">1 / ' + photos.length + '</span>'
+    : '';
+
   $('detail').innerHTML =
     '<div class="detailbody"><button class="back" id="backList">← Voltar aos resultados</button><div class="heroimg">' +
-    renderIllustration(p) +
-    '<span class="tag">' + esc(p.type) + ' · ' + esc(p.deal) + '</span><span class="photoLabel">Imagem demonstrativa</span></div><div class="eyebrow" style="margin-top:14px">REFERÊNCIA ' +
+    heroMediaHtml +
+    carouselControls +
+    '<span class="tag">' + esc(p.type) + ' · ' + esc(p.deal) + '</span>' +
+    (photos.length ? '' : '<span class="photoLabel">Imagem demonstrativa</span>') +
+    '</div><div class="eyebrow" style="margin-top:14px">REFERÊNCIA ' +
     esc(p.id) + ' · DEMONSTRAÇÃO</div><h2 class="detailtitle">' + esc(p.title) + '</h2><div class="loc">⌖ ' +
     esc(p.district) + ' · Venâncio Aires, RS</div><div style="margin-top:12px" class="muted">' +
     (p.offers.length > 1 ? 'A partir de' : 'Preço anunciado') +
@@ -258,6 +276,24 @@ function select(id, fly = true) {
       : '') +
     '<p class="muted" style="margin-top:15px">Endereço, medidas e limites de exemplo não são cadastrais. Anúncio fictício.</p></div>';
 
+  if (photos.length > 1) {
+    const updateSlide = () => {
+      const img = $('heroSlideImg');
+      const cnt = $('heroCount');
+      if (img) img.src = photos[photoIdx];
+      if (cnt) cnt.textContent = (photoIdx + 1) + ' / ' + photos.length;
+    };
+    $('heroPrev')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      photoIdx = (photoIdx - 1 + photos.length) % photos.length;
+      updateSlide();
+    });
+    $('heroNext')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      photoIdx = (photoIdx + 1) % photos.length;
+      updateSlide();
+    });
+  }
   showDetailPanel();
   $('panel').scrollTop = 0;
   render();

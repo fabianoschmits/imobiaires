@@ -111,15 +111,15 @@
         </div>
         <label class="span2">Descrição<textarea name="description" maxlength="600" rows="4" placeholder="Descreva o imóvel: características, diferenciais, pontos de referência..."></textarea></label>
 
-        <h3 class="form-section-title">Foto</h3>
+        <h3 class="form-section-title">Fotos</h3>
         <div class="photo-upload-area" id="photoUploadArea">
-          <div id="photoPreview" class="photo-preview" hidden></div>
+          <div id="photoPreview" class="photo-thumbs" hidden></div>
           <label id="photoLabel" class="photo-label">
-            <span>📷 Clique para adicionar foto</span>
-            <small>JPG, PNG ou WebP · até 2 MB</small>
-            <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+            <span>📷 Clique para adicionar fotos</span>
+            <small>JPG, PNG ou WebP · várias fotos · 1ª é a capa</small>
+            <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
           </label>
-          <button type="button" id="removePhoto" class="secondary" hidden>Remover foto</button>
+          <button type="button" id="removePhoto" class="secondary" hidden>Limpar todas</button>
         </div>
         <input type="hidden" name="photoData" id="photoData">
       </div>

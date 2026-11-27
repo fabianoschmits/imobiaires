@@ -152,36 +152,70 @@ let photoPending = null; // File object when new, null when no change
 let currentPhotoUrl = '';
 
 function setupPhotoUpload() {
+// photoItems: array of { url: string, file?: File } — index 0 is always the cover
+let photoItems = [];
+
+function setupPhotoUpload() {
   $('photoUploadArea').addEventListener('click', (e) => {
-    if (e.target === $('removePhoto') || $('removePhoto').contains(e.target)) return;
+    if (e.target.closest('#removePhoto, .photo-thumb-cover, .photo-thumb-del')) return;
     $('photoInput').click();
   });
   $('photoInput').onchange = (e) => {
-    const f = e.target.files[0];
-    photoPending = null;
-    if (!f) return;
-    if (f.size > 2 * 1024 * 1024 || !['image/jpeg', 'image/png', 'image/webp'].includes(f.type)) {
-      toast('Escolha JPG, PNG ou WebP até 2 MB'); e.target.value = ''; return;
+    const files = [...(e.target.files || [])];
+    for (const f of files) {
+      if (f.size > 2 * 1024 * 1024 || !['image/jpeg', 'image/png', 'image/webp'].includes(f.type)) {
+        toast('Use JPG, PNG ou WebP até 2 MB'); continue;
+      }
+      photoItems.push({ url: URL.createObjectURL(f), file: f });
     }
-    photoPending = f;
-    const url = URL.createObjectURL(f);
-    setPhotoPreview(url);
+    e.target.value = '';
+    renderPhotoThumbs();
   };
-  $('removePhoto').onclick = () => { photoPending = null; currentPhotoUrl = ''; setPhotoPreview(''); $('photoInput').value = ''; };
+  $('removePhoto').onclick = () => {
+    photoItems = [];
+    $('photoInput').value = '';
+    renderPhotoThumbs();
+  };
+  $('photoPreview').addEventListener('click', (e) => {
+    const delBtn = e.target.closest('[data-del-photo]');
+    if (delBtn) {
+      e.stopPropagation();
+      photoItems.splice(+delBtn.dataset.delPhoto, 1);
+      renderPhotoThumbs();
+      return;
+    }
+    const coverBtn = e.target.closest('[data-cover-photo]');
+    if (coverBtn) {
+      e.stopPropagation();
+      const idx = +coverBtn.dataset.coverPhoto;
+      const [item] = photoItems.splice(idx, 1);
+      photoItems.unshift(item);
+      renderPhotoThumbs();
+    }
+  });
 }
 
-function setPhotoPreview(url) {
-  if (url) {
-    $('photoPreview').innerHTML = `<img src="${url}" alt="Preview">`;
-    $('photoPreview').hidden = false;
-    $('photoLabel').hidden = true;
-    $('removePhoto').hidden = false;
-  } else {
-    $('photoPreview').hidden = true;
-    $('photoPreview').innerHTML = '';
+function renderPhotoThumbs() {
+  const wrap = $('photoPreview');
+  if (!photoItems.length) {
+    wrap.hidden = true;
+    wrap.innerHTML = '';
     $('photoLabel').hidden = false;
     $('removePhoto').hidden = true;
+    return;
   }
+  wrap.innerHTML = photoItems.map((item, i) => `
+    <div class="photo-thumb ${i === 0 ? 'is-cover' : ''}">
+      <img src="${esc(item.url)}" alt="Foto ${i + 1}">
+      ${i === 0
+        ? '<span class="photo-thumb-badge">Capa</span>'
+        : `<button type="button" class="photo-thumb-cover" data-cover-photo="${i}">Capa</button>`}
+      <button type="button" class="photo-thumb-del" data-del-photo="${i}" title="Remover">✕</button>
+    </div>
+  `).join('');
+  wrap.hidden = false;
+  $('photoLabel').hidden = false;
+  $('removePhoto').hidden = false;
 }
 
 /* ─── Property form ─── */
@@ -189,25 +223,26 @@ let editingId = null;
 
 function openNewProp() {
   editingId = null;
-  currentPhotoUrl = '';
-  photoPending = null;
+  photoItems = [];
   $('propDialogEyebrow').textContent = 'NOVO ANÚNCIO';
   $('propDialogTitle').textContent = 'Cadastrar imóvel';
   $('propForm').reset();
   $('photoInput').value = '';
-  setPhotoPreview('');
+  renderPhotoThumbs();
   mapPoints = [];
   setTimeout(() => { initPropMap(); propMap.invalidateSize(); propMap.setView([-29.606,-52.192], 14); }, 80);
   openDialog('propDialog');
 }
 
 async function openEditProp(id) {
-  const props = await fetchMyProperties(session, myAgency?.id);
+  const props = await fetchMyProperties(session, myAgency?.id, adminMode);
   const p = props.find(x => x.id === id);
   if (!p) { toast('Imóvel não encontrado ou sem permissão.'); return; }
   editingId = id;
-  currentPhotoUrl = p.photo_url || '';
-  photoPending = null;
+  const existingPhotos = Array.isArray(p.photos) && p.photos.length
+    ? p.photos
+    : (p.photo_url ? [p.photo_url] : []);
+  photoItems = existingPhotos.map((url) => ({ url }));
   $('propDialogEyebrow').textContent = 'EDITAR ANÚNCIO';
   $('propDialogTitle').textContent = 'Editar imóvel';
   const form = $('propForm');
@@ -222,7 +257,7 @@ async function openEditProp(id) {
   form.elements.depth.value = p.depth || '';
   form.elements.beds.value = p.beds || '';
   form.elements.description.value = p.description || '';
-  setPhotoPreview(p.photo_url || '');
+  renderPhotoThumbs();
   mapPoints = Array.isArray(p.points) && p.points.length ? p.points : (p.lat && p.lng ? [[p.lat, p.lng]] : []);
   setTimeout(() => {
     initPropMap(); propMap.invalidateSize();
@@ -239,10 +274,15 @@ $('propForm').onsubmit = async (e) => {
   $('savePropBtn').disabled = true;
   $('savePropBtn').textContent = 'Salvando...';
   try {
-    let photoUrl = currentPhotoUrl;
-    if (photoPending) {
-      photoUrl = await uploadPhoto(session, photoPending, editingId || 'new');
+    const uploadedUrls = [];
+    for (const item of photoItems) {
+      if (item.file) {
+        uploadedUrls.push(await uploadPhoto(session, item.file, editingId || 'new'));
+      } else if (item.url) {
+        uploadedUrls.push(item.url);
+      }
     }
+    const photoUrl = uploadedUrls[0] || null;
 
     let points = [];
     try { points = JSON.parse(f.points || '[]'); } catch {}
@@ -262,6 +302,7 @@ $('propForm').onsubmit = async (e) => {
       lng: +f.lng,
       points,
       photo_url: photoUrl,
+      photos: uploadedUrls,
       status: 'published',
     };
 
