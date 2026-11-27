@@ -1,5 +1,5 @@
 import { CENTER, MAP_PROVIDERS } from './config.js';
-import { esc, getCompactPrice } from './catalog.js';
+import { esc, getShortLabel } from './catalog.js';
 
 export function createMapController({ onRender, onSelect, onMapError, onMapClick }) {
   let map = null;
@@ -88,8 +88,8 @@ export function createMapController({ onRender, onSelect, onMapError, onMapClick
           '<span class="pin ' +
           (activeId === p.id ? 'active' : '') +
           '">' +
-          esc(getCompactPrice(p)) +
-          (p.offers.length > 1 ? ' <small>· ' + p.offers.length + '</small>' : '') +
+          esc(getShortLabel(p)) +
+          (p.offers.length > 1 ? ' <small>·' + p.offers.length + '</small>' : '') +
           '</span>',
         iconSize: [100, 32],
         iconAnchor: [50, 32],

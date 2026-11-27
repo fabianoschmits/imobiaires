@@ -82,6 +82,21 @@ export const getCompactPrice = (p) =>
       ? 'R$ ' + fmt(getMinPrice(p) / 1000000) + ' mi'
       : 'R$ ' + fmt(getMinPrice(p) / 1000) + ' mil';
 
+export function getShortLabel(p) {
+  const deal = p.deal === 'Aluguel' ? 'Alug · ' : '';
+  const typeMap = {
+    Terreno: 'Terr',
+    Casa: 'Casa',
+    Apartamento: 'Apto',
+    Comercial: 'Com',
+  };
+  const t = typeMap[p.type] || p.type;
+  const detail = (p.type === 'Casa' || p.type === 'Apartamento') && p.beds
+    ? `${p.beds}q`
+    : `${fmt(p.area)}m²`;
+  return `${deal}${t} ${detail}`;
+}
+
 export function filterProperties(properties, { search, mode, fav, type, filters }) {
   const s = search
     .trim()
