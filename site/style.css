@@ -616,8 +616,27 @@ dialog textarea {
 .hero-prev{left:10px}
 .hero-next{right:10px}
 .hero-count{position:absolute;bottom:10px;right:10px;background:rgba(15,23,42,.7);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;z-index:2}
+.primary, .secondary, .chip, .nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+.modalfoot {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 @media(max-width:760px){
   .search input, input, select, textarea { font-size:16px !important; }
+  .modalfoot { justify-content: stretch; }
+  .modalfoot > * { flex: 1 1 auto; }
+  .detailactions { flex-wrap: wrap; }
+  .detailactions button { min-width: 120px; }
+  .offerrow { flex-wrap: wrap; }
 }
 .search-suggest button{padding:7px 10px;font-size:12px}
 .search-suggest small{font-size:10px}

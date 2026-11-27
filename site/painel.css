@@ -22,7 +22,8 @@
 
 /* Header */
 .painel-header{height:68px;background:#fff;border-bottom:1px solid #e1e7ef;display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:16px;position:sticky;top:0;z-index:100}
-.painel-header-info{display:flex;align-items:center;gap:10px}
+.painel-header-info{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.painel-header-info a, .painel-header-info button{display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .painel-agency-name{font-weight:700;color:#17243b;font-size:14px}
 
 /* Main area */
