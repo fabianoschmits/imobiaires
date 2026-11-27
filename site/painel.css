@@ -226,8 +226,10 @@
   overscroll-behavior: contain;
   border-radius: var(--r-modal);
   border: 1px solid var(--line);
+  border-top: 2px solid rgba(36, 77, 133, 0.18);
   padding: 0;
-  box-shadow: var(--shadow-lg);
+  background: #FAFCFF;
+  box-shadow: 0 8px 40px rgba(36, 77, 133, 0.13), 0 2px 8px rgba(37, 54, 75, 0.08);
 }
 .painel-dialog form { padding: 24px; }
 
