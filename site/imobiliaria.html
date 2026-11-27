@@ -99,6 +99,11 @@
             <div class="prop-card-body">
               <p class="prop-card-title">${esc(p.title)}</p>
               <div class="prop-card-loc">⌖ ${esc(p.district)} · Venâncio Aires</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;color:#52637e;font-weight:600">
+                ${agency.logo_url ? `<img src="${esc(agency.logo_url)}" alt="${esc(agency.name)}" style="width:20px;height:20px;border-radius:5px;object-fit:cover;border:1px solid #e1e7ef">` : ''}
+                <span>${esc(agency.name)}</span>
+                ${agency.creci ? `<span style="color:#65738a">· ${esc(agency.creci)}</span>` : ''}
+              </div>
               <div class="prop-card-price">${money(price)}${p.deal === 'Aluguel' ? '<small style="font-size:13px">/mês</small>' : ''}</div>
               <div class="prop-card-meta">
                 <span>▱ ${fmt(p.area)} m²</span>
@@ -111,3 +116,4 @@
   </script>
 </body>
 </html>
+
