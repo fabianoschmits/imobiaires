@@ -148,10 +148,6 @@ function updateHiddenInputs() {
 }
 
 /* ─── Photo ─── */
-let photoPending = null; // File object when new, null when no change
-let currentPhotoUrl = '';
-
-function setupPhotoUpload() {
 // photoItems: array of { url: string, file?: File } — index 0 is always the cover
 let photoItems = [];
 

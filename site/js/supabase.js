@@ -120,9 +120,10 @@ export async function fetchAgencyBySlug(slug) {
 }
 
 export async function fetchPropertiesByAgency(agencyId) {
+  // PostgREST embedded filter: use the resource-embedding filter syntax
   return req(
     'GET',
-    `/rest/v1/properties?status=eq.published&select=*,offers!inner(id,price,deal_type,agency_id,agencies(name,phone,logo_url,creci,slug))&offers.agency_id=eq.${agencyId}&order=created_at.desc`,
+    `/rest/v1/properties?status=eq.published&select=*,offers!inner(id,price,deal_type,agency_id,agencies(name,phone,logo_url,creci,slug))&offers.agency_id=eq.${encodeURIComponent(agencyId)}&order=created_at.desc`,
     null,
     null
   );
