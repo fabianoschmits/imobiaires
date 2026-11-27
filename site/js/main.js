@@ -548,7 +548,6 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-$('copyContact').onclick = () => copyText(contactMessage);
 $('explore').onclick = () => switchMode('all');
 $('saved').onclick = () => switchMode(mode === 'saved' ? 'all' : 'saved');
 $('compareTop').onclick = compare;
