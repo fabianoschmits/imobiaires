@@ -5,6 +5,12 @@
 *.pem
 *.key
 
+# Auto-generated env module (contains anon key — regenerate from .env locally)
+site/js/env.js
+
+# Supabase setup script reads from .env — keep out of git (has project ref)
+supabase/setup.mjs
+
 # Dependencies and build outputs
 node_modules/
 dist/
@@ -36,3 +42,4 @@ desktop.ini
 .idea/
 *.swp
 *.swo
+

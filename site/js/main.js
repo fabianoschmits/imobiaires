@@ -8,8 +8,10 @@ import {
   filterProperties,
   sortAndBoundProperties,
   renderIllustration,
+  fromSupabaseRow,
 } from './catalog.js';
 import { createMapController } from './map.js';
+import { fetchProperties } from './supabase.js';
 
 const $ = (s) => document.getElementById(s);
 const q = (s, p = document) => p.querySelector(s);
@@ -20,6 +22,9 @@ let extra = readStorage('offers', []);
 let fav = new Set(readStorage('fav', []));
 const comp = new Set();
 
+/** Properties loaded from Supabase (replaces BASE_PROPERTIES when available) */
+let supabaseProps = null;
+
 let type = 'Todos';
 let mode = 'all';
 let active = null;
@@ -29,7 +34,22 @@ let photoData = '';
 let contactMessage = '';
 let toastTimer;
 
-const all = () => getAllProperties(mine, extra);
+/**
+ * Returns all properties: Supabase rows first (if loaded), then
+ * any locally-added mine/extra overrides on top.
+ */
+const all = () => {
+  if (supabaseProps) {
+    // Merge local offers on top of Supabase props
+    return supabaseProps.map((p) => ({
+      ...p,
+      offers: [...p.offers, ...extra.filter((o) => o.id === p.id)].sort(
+        (a, b) => a.price - b.price
+      ),
+    }));
+  }
+  return getAllProperties(mine, extra);
+};
 
 function toast(t) {
   $('toast').textContent = t;
@@ -748,6 +768,21 @@ const initialId = new URLSearchParams(location.search).get('imovel');
 if (initialId && all().some((p) => p.id === initialId)) select(initialId);
 if (!initialId && isMobile()) setPanel(false);
 window.addEventListener('resize', () => mapCtrl.invalidateSize());
+
+/* ─── Load from Supabase (non-blocking) ─── */
+(async () => {
+  try {
+    const rows = await fetchProperties();
+    if (rows && rows.length > 0) {
+      supabaseProps = rows.map(fromSupabaseRow);
+      render(); // re-renders list + map markers with real data
+      if (initialId && all().some((p) => p.id === initialId)) select(initialId);
+    }
+  } catch (err) {
+    // Fall back to seed data silently
+    console.warn('ImobiAires: usando dados locais (Supabase indisponível):', err.message);
+  }
+})();
 
 function renderSuggestions() {
   const box = $('searchSuggest');

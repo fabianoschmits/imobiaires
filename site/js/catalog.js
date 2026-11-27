@@ -16,6 +16,47 @@ export const esc = (v) =>
     (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
   );
 
+/**
+ * Convert a Supabase `properties` row (with nested offers + agencies) into the
+ * local property shape expected by catalog/map/filter functions.
+ */
+export function fromSupabaseRow(row) {
+  const offers = (row.offers || [])
+    .map((o) => ({
+      agency: o.agencies?.name || 'Imobiliária',
+      price: o.price || 0,
+      phone: o.agencies?.phone || '',
+      agency_id: o.agency_id,
+    }))
+    .sort((a, b) => a.price - b.price);
+
+  return {
+    id: row.id,
+    title: row.title || '',
+    type: row.type || 'Terreno',
+    district: row.district || '',
+    lat: row.lat || 0,
+    lng: row.lng || 0,
+    area: row.area || 0,
+    front: row.front || 0,
+    depth: row.depth || 0,
+    beds: row.beds || 0,
+    deal: row.deal || 'Venda',
+    description: row.description || '',
+    points: Array.isArray(row.points)
+      ? row.points
+      : row.points
+        ? JSON.parse(row.points)
+        : [],
+    photo: row.photo_url || null,
+    photo_url: row.photo_url || null,
+    offers: offers.length > 0 ? offers : [{ agency: '—', price: 0 }],
+    mine: false,
+    is_demo: row.is_demo || false,
+    created_by: row.created_by || null,
+  };
+}
+
 export function getAllProperties(mine, extra) {
   return [...BASE_PROPERTIES, ...mine].map((p) => ({
     ...p,
@@ -90,6 +131,9 @@ export function sortAndBoundProperties(filtered, { map, withinBounds, sort }) {
 }
 
 export function renderIllustration(p) {
+  if (p.photo_url) {
+    return '<img src="' + esc(p.photo_url) + '" alt="Foto do imóvel">';
+  }
   if (p.photo && /^data:image\/(jpeg|png|webp);base64,/.test(p.photo)) {
     return '<img src="' + esc(p.photo) + '" alt="Foto enviada na demonstração">';
   }
@@ -108,4 +152,3 @@ export function renderIllustration(p) {
     '<circle cx="63" cy="90" r="18" fill="#527b61"/><path d="M63 99v24" stroke="#52665a" stroke-width="4"/><circle cx="356" cy="86" r="21" fill="#547a60"/><path d="M356 100v23" stroke="#52665a" stroke-width="4"/></svg></div>'
   );
 }
-
