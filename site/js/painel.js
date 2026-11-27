@@ -340,8 +340,34 @@ $('authTabRegister').onclick = () => {
   showError('');
 };
 
+function validateAuthForm(form) {
+  let firstInvalid = null;
+  form.querySelectorAll('input').forEach((inp) => {
+    const valid = inp.checkValidity();
+    inp.classList.toggle('field-error', !valid);
+    if (!valid && !firstInvalid) firstInvalid = inp;
+  });
+  if (firstInvalid) {
+    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    firstInvalid.focus({ preventScroll: true });
+    showError('Preencha os campos obrigatórios destacados em vermelho.');
+    return false;
+  }
+  showError('');
+  return true;
+}
+
+document.querySelectorAll('#loginForm input, #registerForm input').forEach((inp) => {
+  inp.addEventListener('input', () => {
+    if (inp.classList.contains('field-error') && inp.checkValidity()) {
+      inp.classList.remove('field-error');
+    }
+  });
+});
+
 $('loginForm').onsubmit = async (e) => {
   e.preventDefault();
+  if (!validateAuthForm(e.target)) return;
   const f = Object.fromEntries(new FormData(e.target));
   const btn = e.target.querySelector('button[type=submit]');
   btn.disabled = true; btn.textContent = 'Entrando...';
@@ -352,8 +378,8 @@ $('loginForm').onsubmit = async (e) => {
     myAgency = await getMyAgency(session);
     if (!myAgency && !adminMode) toast('Conta sem imobiliária vinculada. Crie uma no cadastro.');
     await showDash();
-  } catch (err) {
-    showError(err.message || 'E-mail ou senha incorretos.');
+  } catch {
+    showError('Não foi possível entrar. Verifique seus dados e tente novamente.');
   } finally {
     btn.disabled = false; btn.textContent = 'Entrar';
   }
@@ -361,6 +387,7 @@ $('loginForm').onsubmit = async (e) => {
 
 $('registerForm').onsubmit = async (e) => {
   e.preventDefault();
+  if (!validateAuthForm(e.target)) return;
   const f = Object.fromEntries(new FormData(e.target));
   const btn = e.target.querySelector('button[type=submit]');
   btn.disabled = true; btn.textContent = 'Criando conta...';
@@ -375,8 +402,8 @@ $('registerForm').onsubmit = async (e) => {
       return;
     }
     await showDash();
-  } catch (err) {
-    showError(err.message || 'Erro ao criar conta.');
+  } catch {
+    showError('Não foi possível criar a conta. Verifique os dados e tente novamente.');
   } finally {
     btn.disabled = false; btn.textContent = 'Criar conta e entrar';
   }

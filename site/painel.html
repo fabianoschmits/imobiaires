@@ -16,7 +16,7 @@
       <button type="button" id="authTabLogin" class="chip active">Entrar</button>
       <button type="button" id="authTabRegister" class="chip">Criar conta</button>
     </div>
-    <form id="loginForm">
+    <form id="loginForm" novalidate>
       <label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="contato@imobiliaria.com"></label>
       <label>Senha
         <div class="pw-wrap">
@@ -26,7 +26,7 @@
       </label>
       <button class="primary auth-submit">Entrar</button>
     </form>
-    <form id="registerForm" hidden>
+    <form id="registerForm" hidden novalidate>
       <label>Nome da imobiliária<input name="name" required maxlength="60" autocomplete="organization" placeholder="Ex.: Imobiliária Centro"></label>
       <label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="contato@imobiliaria.com"></label>
       <label>WhatsApp (opcional)<input name="phone" type="tel" maxlength="20" autocomplete="tel" placeholder="(51) 99999-9999"></label>

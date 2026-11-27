@@ -11,6 +11,7 @@
 .auth-card label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:#17243b;margin:0}
 .auth-card input{width:100%;min-width:0;box-sizing:border-box;border:1px solid #d5dde8;border-radius:9px;background:#fff;padding:11px 12px;font-size:16px;color:#17243b;transition:border-color .15s}
 .auth-card input:focus{outline:none;border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,.12)}
+.auth-card input.field-error{border-color:#dc2626 !important;background:#fff5f5;box-shadow:0 0 0 3px rgba(220,38,38,.12)}
 .pw-wrap{position:relative;display:flex;align-items:center;width:100%}
 .pw-wrap input{padding-right:44px}
 .pw-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;display:grid;place-items:center;border-radius:7px;font-size:16px;color:#65738a;background:transparent;border:0;cursor:pointer}
