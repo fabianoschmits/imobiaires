@@ -123,10 +123,39 @@
           <div class="eyebrow">Seus anúncios</div>
           <h2 style="margin:4px 0 0">Gerenciar imóveis</h2>
         </div>
-        <button id="newPropBtn" type="button" class="primary">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          Novo imóvel
-        </button>
+        <div class="painel-top-actions">
+          <button id="toggleSearchBtn" type="button" class="secondary icon-btn" aria-label="Pesquisar anúncios" title="Pesquisar anúncios">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          </button>
+          <button id="newPropBtn" type="button" class="primary">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Novo imóvel
+          </button>
+        </div>
+      </div>
+
+      <div id="painelSearchBox" class="painel-search-box" hidden>
+        <div class="painel-search-row">
+          <div class="painel-search-input-wrap">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="painelSearchInput" type="search" placeholder="Buscar por título, bairro, rua, tipo, preço, código..." autocomplete="off">
+            <button id="painelSearchClear" type="button" class="painel-search-clear" aria-label="Limpar pesquisa" hidden>✕</button>
+            <div id="painelSearchAuto" class="painel-search-auto" hidden></div>
+          </div>
+          <select id="painelSearchDeal" aria-label="Filtrar por negócio">
+            <option value="">Venda e Aluguel</option>
+            <option value="Venda">Venda</option>
+            <option value="Aluguel">Aluguel</option>
+          </select>
+          <select id="painelSearchType" aria-label="Filtrar por tipo">
+            <option value="">Todos os tipos</option>
+            <option value="Casa">Casa</option>
+            <option value="Apartamento">Apartamento</option>
+            <option value="Terreno">Terreno</option>
+            <option value="Comercial">Comercial</option>
+            <option value="Rural">Rural</option>
+          </select>
+        </div>
       </div>
 
       <div class="painel-stats" id="painelStats"></div>
@@ -149,10 +178,14 @@
       <form id="perfilForm" class="perfil-card" novalidate>
         <div class="perfil-logo-row">
           <div id="perfilLogoPreview" class="perfil-logo-box"></div>
-          <div>
-            <strong style="display:block;font-size:13.5px;margin-bottom:4px">Logo da imobiliária</strong>
-            <input id="perfilLogoInput" type="file" accept="image/jpeg,image/png,image/webp" style="font-size:12.5px">
-            <small class="muted" style="display:block;margin-top:4px">JPG, PNG ou WebP até 2 MB</small>
+          <div class="perfil-logo-info">
+            <strong style="display:block;font-size:13.5px;margin-bottom:6px">Logo da imobiliária</strong>
+            <div class="file-upload-wrap">
+              <label for="perfilLogoInput" class="secondary file-upload-btn">Escolher foto</label>
+              <input id="perfilLogoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+              <span id="perfilLogoName" class="file-upload-name muted"></span>
+            </div>
+            <small class="muted" style="display:block;margin-top:6px">JPG, PNG ou WebP até 2 MB</small>
           </div>
         </div>
 

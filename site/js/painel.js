@@ -131,13 +131,54 @@ async function renderDash() {
   $('painelStats').innerHTML = `
     <div class="stat-card"><small>${adminMode ? 'Total do sistema' : 'Imóveis cadastrados'}</small><strong>${props.length}</strong></div>
     <div class="stat-card"><small>Ofertas ativas</small><strong>${totalOffers}</strong></div>
-    <div class="stat-card"><small>Conta</small><strong style="font-size:14px;letter-spacing:0">${esc(session?.user?.email || '')}</strong></div>
   `;
+  renderPropGrid();
+}
+
+function propSearchText(p) {
+  const offer = p.offers?.[0];
+  return [
+    p.id,
+    p.title,
+    p.district,
+    p.address,
+    p.street,
+    p.type,
+    p.deal,
+    p.description,
+    p.area,
+    p.rooms,
+    offer?.price,
+    offer?.agencies?.name,
+  ]
+    .filter((v) => v !== null && v !== undefined && v !== '')
+    .join(' ')
+    .toLowerCase();
+}
+
+function getFilteredProps() {
+  const q = ($('painelSearchInput')?.value || '').trim().toLowerCase();
+  const deal = $('painelSearchDeal')?.value || '';
+  const type = $('painelSearchType')?.value || '';
+  return props.filter((p) => {
+    if (deal && p.deal !== deal) return false;
+    if (type && p.type !== type) return false;
+    if (q && !propSearchText(p).includes(q)) return false;
+    return true;
+  });
+}
+
+function renderPropGrid() {
+  const list = getFilteredProps();
   $('emptyMsg').hidden = props.length > 0;
 
   if (!props.length) { $('propGrid').innerHTML = ''; return; }
+  if (!list.length) {
+    $('propGrid').innerHTML = '<p class="muted" style="grid-column:1/-1;text-align:center;padding:32px 0">Nenhum anúncio encontrado para essa pesquisa.</p>';
+    return;
+  }
 
-  $('propGrid').innerHTML = props.map((p) => {
+  $('propGrid').innerHTML = list.map((p) => {
     const offer = p.offers?.[0];
     const price = offer?.price || 0;
     const coverUrl = p.photo_url || (Array.isArray(p.photos) && p.photos[0]) || null;
@@ -418,6 +459,32 @@ document.addEventListener('click', async (e) => {
     session = null; myAgency = null;
     showAuth(); return;
   }
+  if (b.id === 'toggleSearchBtn') {
+    const box = $('painelSearchBox');
+    const willShow = box.hidden;
+    box.hidden = !willShow;
+    b.classList.toggle('active', willShow);
+    if (willShow) $('painelSearchInput')?.focus();
+    return;
+  }
+  if (b.id === 'painelSearchClear') {
+    $('painelSearchInput').value = '';
+    $('painelSearchClear').hidden = true;
+    $('painelSearchAuto').hidden = true;
+    renderPropGrid();
+    $('painelSearchInput').focus();
+    return;
+  }
+  if (b.dataset.autoId) {
+    const item = props.find((p) => String(p.id) === b.dataset.autoId);
+    if (item) {
+      $('painelSearchInput').value = item.title || '';
+      $('painelSearchClear').hidden = !$('painelSearchInput').value;
+      $('painelSearchAuto').hidden = true;
+      renderPropGrid();
+    }
+    return;
+  }
   if (b.id === 'newPropBtn') { openNewProp(); return; }
   if (b.id === 'navAnuncios' || b.id === 'backToAnuncios') { switchDashTab('anuncios'); return; }
   if (b.id === 'navPerfil' || b.id === 'backToPerfil') { switchDashTab('perfil'); return; }
@@ -617,6 +684,62 @@ $('senhaForm')?.addEventListener('submit', async (e) => {
     btn.disabled = false;
     btn.textContent = 'Atualizar senha';
   }
+});
+
+/* ─── Search & Autocomplete ─── */
+function updateSearchAuto() {
+  const inp = $('painelSearchInput');
+  const auto = $('painelSearchAuto');
+  const clearBtn = $('painelSearchClear');
+  if (!inp || !auto) return;
+  const q = inp.value.trim().toLowerCase();
+  if (clearBtn) clearBtn.hidden = !inp.value;
+  if (!q) {
+    auto.hidden = true;
+    auto.innerHTML = '';
+    return;
+  }
+  const matches = props.filter((p) => propSearchText(p).includes(q)).slice(0, 6);
+  if (!matches.length) {
+    auto.hidden = true;
+    auto.innerHTML = '';
+    return;
+  }
+  auto.innerHTML = matches
+    .map((p) => {
+      const price = p.offers?.[0]?.price ? 'R$ ' + Number(p.offers[0].price).toLocaleString('pt-BR') : '';
+      return `<button type="button" class="painel-auto-item" data-auto-id="${esc(p.id)}">
+        <span class="painel-auto-title">${esc(p.title || 'Sem título')}</span>
+        <span class="painel-auto-meta">${esc(p.type)} · ${esc(p.deal)}${p.district ? ' · ' + esc(p.district) : ''}${price ? ' · ' + price : ''}</span>
+      </button>`;
+    })
+    .join('');
+  auto.hidden = false;
+}
+
+$('painelSearchInput')?.addEventListener('input', () => {
+  updateSearchAuto();
+  renderPropGrid();
+});
+$('painelSearchDeal')?.addEventListener('change', () => {
+  updateSearchAuto();
+  renderPropGrid();
+});
+$('painelSearchType')?.addEventListener('change', () => {
+  updateSearchAuto();
+  renderPropGrid();
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.painel-search-input-wrap')) {
+    const auto = $('painelSearchAuto');
+    if (auto) auto.hidden = true;
+  }
+});
+
+$('perfilLogoInput')?.addEventListener('change', (e) => {
+  const file = e.target.files?.[0];
+  const nameEl = $('perfilLogoName');
+  if (nameEl) nameEl.textContent = file ? file.name : '';
 });
 
 /* ─── Boot ─── */
