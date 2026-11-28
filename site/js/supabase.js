@@ -218,7 +218,7 @@ export async function upsertProperty(session, prop) {
     ? `/rest/v1/properties?id=eq.${prop.id}`
     : '/rest/v1/properties?select=id';
   const payload = { ...prop, created_by: session.user.id };
-  if (!prop.id) delete payload.id;
+  if (!prop.id) payload.id = crypto.randomUUID();
   const data = await req(method, path, payload, session);
   return method === 'POST' ? data?.[0] : prop;
 }

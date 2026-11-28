@@ -362,15 +362,43 @@ async function openEditProp(id) {
     ? p.photos
     : (p.photo_url ? [p.photo_url] : []);
   photoItems = existingPhotos.map((url) => ({ url }));
+function formatPriceComma(val) {
+  const digits = String(val || '').replace(/\D/g, '').slice(0, 12);
+  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
+}
+$('propForm')?.elements?.price?.addEventListener('input', (e) => {
+  e.target.value = formatPriceComma(e.target.value);
+});
+
+function clearPropErrors() {
+  const form = $('propForm');
+  if (!form) return;
+  form.querySelectorAll('.field-error').forEach((el) => el.classList.remove('field-error'));
+  form.querySelectorAll('.field-error-msg').forEach((el) => el.remove());
+}
+
+function setFieldError(el, msg) {
+  if (!el) return;
+  el.classList.add('field-error');
+  const label = el.closest('label');
+  if (label && !label.querySelector('.field-error-msg')) {
+    const span = document.createElement('span');
+    span.className = 'field-error-msg';
+    span.textContent = msg;
+    label.appendChild(span);
+  }
+}
+
   $('propDialogEyebrow').textContent = 'EDITAR ANÚNCIO';
   $('propDialogTitle').textContent = 'Editar imóvel';
+  clearPropErrors();
   const form = $('propForm');
   form.reset();
   form.elements.title.value = p.title || '';
   form.elements.type.value = p.type || 'Terreno';
   form.elements.deal.value = p.deal || 'Venda';
   form.elements.district.value = p.district || '';
-  form.elements.price.value = p.offers?.[0]?.price || '';
+  form.elements.price.value = formatPriceComma(p.offers?.[0]?.price || '');
   form.elements.area.value = p.area || '';
   form.elements.front.value = p.front || '';
   form.elements.depth.value = p.depth || '';
@@ -388,8 +416,35 @@ async function openEditProp(id) {
 
 $('propForm').onsubmit = async (e) => {
   e.preventDefault();
-  const f = Object.fromEntries(new FormData(e.target));
-  if (!f.lat || !f.lng) { toast('Marque a localização no mapa antes de salvar.'); return; }
+  clearPropErrors();
+  const form = e.target;
+  const f = Object.fromEntries(new FormData(form));
+  const priceNum = Number(String(f.price || '').replace(/\D/g, ''));
+  const areaNum = Number(f.area);
+  let firstInvalid = null;
+
+  const check = (el, ok, msg) => {
+    if (!ok) {
+      setFieldError(el, msg);
+      if (!firstInvalid) firstInvalid = el;
+    }
+  };
+  check(form.elements.title, String(f.title || '').trim().length >= 3, 'Informe o título do anúncio.');
+  check(form.elements.district, String(f.district || '').trim().length >= 2, 'Informe o bairro.');
+  check(form.elements.price, priceNum > 0, 'Informe o preço do imóvel.');
+  check(form.elements.area, areaNum > 0, 'Informe a área em m².');
+
+  if (firstInvalid) {
+    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    firstInvalid.focus({ preventScroll: true });
+    toast('Preencha os campos destacados antes de salvar.');
+    return;
+  }
+  if (!f.lat || !f.lng) {
+    $('propMap')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    toast('Marque a localização no mapa antes de salvar.');
+    return;
+  }
 
   $('savePropBtn').disabled = true;
   $('savePropBtn').textContent = 'Salvando...';
@@ -434,7 +489,7 @@ $('propForm').onsubmit = async (e) => {
         property_id: propId,
         agency_id: myAgency.id,
         deal_type: f.deal,
-        price: +f.price,
+        price: priceNum,
       });
     }
 

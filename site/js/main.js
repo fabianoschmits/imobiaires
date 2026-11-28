@@ -644,11 +644,21 @@ $('resetFilter').onclick = () => {
   $('filterCount').textContent = '';
   render();
 };
+function formatPriceComma(val) {
+  const digits = String(val || '').replace(/\D/g, '').slice(0, 12);
+  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
+}
+['minPrice', 'maxPrice'].forEach((id) => {
+  $(id)?.addEventListener('input', () => {
+    $(id).value = formatPriceComma($(id).value);
+  });
+});
+
 $('filterForm').onsubmit = (e) => {
   e.preventDefault();
   const f = {};
   ['minPrice', 'maxPrice', 'minArea', 'maxArea'].forEach(
-    (k) => (f[k] = Number($(k).value) || 0)
+    (k) => (f[k] = Number(String($(k).value || '').replace(/\D/g, '')) || 0)
   );
   f.bairro = $('bairro').value;
   f.negocio = $('negocio').value;

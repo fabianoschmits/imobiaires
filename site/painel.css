@@ -672,6 +672,17 @@
   .painel-dialog .span2 { grid-column: span 1; }
   .prop-map { height: 230px; }
 }
+.painel-dialog .field-error {
+  border-color: var(--danger) !important;
+  background: #fef2f2 !important;
+}
+.field-error-msg {
+  color: var(--danger);
+  font-size: 11.5px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
 @media (max-width: 480px) {
   .auth-card { padding: 24px 18px; }
   .auth-card input { font-size: 16px; }
