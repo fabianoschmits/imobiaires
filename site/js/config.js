@@ -9,7 +9,7 @@ export const MAP_PROVIDERS = {
       window.__IMOBIAIRES_CONFIG__?.satelliteAttribution ||
       'Tiles © Esri — Esri, Maxar, Earthstar Geographics, GIS User Community',
     maxZoom: 22,        // overzoom permitido
-    maxNativeZoom: 19,  // tiles reais existem até zoom 19
+    maxNativeZoom: 18,  // tiles reais existem até zoom 18 na região; 19-22 faz zoom digital
   },
   street: {
     url:
