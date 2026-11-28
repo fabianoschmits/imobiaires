@@ -68,13 +68,29 @@ async function showDash() {
 }
 
 function switchDashTab(tab) {
-  const isPerfil = tab === 'perfil';
-  $('anunciosView').hidden = isPerfil;
-  $('perfilView').hidden = !isPerfil;
-  $('navAnuncios').classList.toggle('active', !isPerfil);
-  $('navPerfil').classList.toggle('active', isPerfil);
-  if (isPerfil) fillPerfilForm();
+  $('anunciosView').hidden = tab !== 'anuncios';
+  $('perfilView').hidden = tab !== 'perfil';
+  $('senhaView').hidden = tab !== 'senha';
+  $('navAnuncios').classList.toggle('active', tab === 'anuncios');
+  $('navPerfil').classList.toggle('active', tab === 'perfil' || tab === 'senha');
+  if (tab === 'perfil') fillPerfilForm();
+  if (tab === 'senha') $('senhaForm')?.reset();
 }
+
+function formatPhoneBR(val) {
+  const d = String(val || '').replace(/\D/g, '').slice(0, 11);
+  if (!d) return '';
+  if (d.length <= 2) return `(${d}`;
+  if (d.length <= 3) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 8) return `(${d.slice(0, 2)}) ${d.slice(2, 3)} ${d.slice(3)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 3)} ${d.slice(3, 8)} ${d.slice(8)}`;
+}
+
+document.querySelectorAll('input[type="tel"]').forEach((inp) => {
+  inp.addEventListener('input', () => {
+    inp.value = formatPhoneBR(inp.value);
+  });
+});
 
 function fillPerfilForm() {
   const form = $('perfilForm');
@@ -82,8 +98,7 @@ function fillPerfilForm() {
   form.elements.name.value = myAgency?.name || '';
   form.elements.owner_name.value = myAgency?.owner_name || '';
   form.elements.creci.value = myAgency?.creci || '';
-  form.elements.phone.value = myAgency?.phone || '';
-  form.elements.new_password.value = '';
+  form.elements.phone.value = formatPhoneBR(myAgency?.phone || '');
   const box = $('perfilLogoPreview');
   if (box) {
     box.innerHTML = myAgency?.logo_url
@@ -410,7 +425,8 @@ document.addEventListener('click', async (e) => {
   }
   if (b.id === 'newPropBtn') { openNewProp(); return; }
   if (b.id === 'navAnuncios' || b.id === 'backToAnuncios') { switchDashTab('anuncios'); return; }
-  if (b.id === 'navPerfil') { switchDashTab('perfil'); return; }
+  if (b.id === 'navPerfil' || b.id === 'backToPerfil') { switchDashTab('perfil'); return; }
+  if (b.id === 'openSenhaBtn') { switchDashTab('senha'); return; }
   if (b.id === 'cancelPropBtn') { closeDialog('propDialog'); return; }
   if (b.dataset.edit) { await openEditProp(b.dataset.edit); return; }
   if (b.dataset.delete) {
@@ -570,17 +586,41 @@ $('perfilForm')?.addEventListener('submit', async (e) => {
       });
       if (updated) myAgency = updated;
     }
-    if (f.new_password && f.new_password.length >= 6) {
-      await updatePassword(session, f.new_password);
-    }
     toast('Perfil atualizado com sucesso!');
-    $('perfilNewPassword').value = '';
     await showDash();
   } catch (err) {
     toast('Erro ao salvar perfil: ' + err.message);
   } finally {
     btn.disabled = false;
     btn.textContent = 'Salvar alterações';
+  }
+});
+
+$('senhaForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const p1 = $('senhaNova').value;
+  const p2 = $('senhaConfirma').value;
+  if (p1.length < 6) {
+    toast('A nova senha deve ter pelo menos 6 caracteres.');
+    return;
+  }
+  if (p1 !== p2) {
+    toast('As senhas não coincidem. Digite novamente.');
+    return;
+  }
+  const btn = $('saveSenhaBtn');
+  btn.disabled = true;
+  btn.textContent = 'Atualizando...';
+  try {
+    await updatePassword(session, p1);
+    toast('Senha atualizada com sucesso!');
+    $('senhaForm').reset();
+    switchDashTab('perfil');
+  } catch (err) {
+    toast('Erro ao atualizar senha: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Atualizar senha';
   }
 });
 

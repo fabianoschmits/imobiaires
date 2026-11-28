@@ -164,9 +164,35 @@
           <label>WhatsApp<input name="phone" type="tel" maxlength="20" placeholder="(51) 99999-9999"></label>
         </div>
 
-        <label style="margin-top:10px">Nova senha (opcional)
+        <div class="modalfoot" style="margin-top:20px;justify-content:space-between">
+          <button type="button" id="openSenhaBtn" class="secondary">Alterar senha</button>
+          <button type="submit" id="savePerfilBtn" class="primary">Salvar alterações</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="senhaView" class="perfil-view" hidden>
+      <div class="painel-top">
+        <div>
+          <div class="eyebrow">Segurança da conta</div>
+          <h2 style="margin:4px 0 0">Alterar senha</h2>
+        </div>
+        <button id="backToPerfil" type="button" class="secondary">Voltar ao perfil</button>
+      </div>
+
+      <form id="senhaForm" class="perfil-card" novalidate>
+        <label>Nova senha
           <div class="pw-wrap">
-            <input id="perfilNewPassword" name="new_password" type="password" minlength="6" autocomplete="new-password" placeholder="Deixe em branco para manter a atual">
+            <input id="senhaNova" name="new_password" type="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+            <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
+            </button>
+          </div>
+        </label>
+
+        <label>Confirmar nova senha
+          <div class="pw-wrap">
+            <input id="senhaConfirma" name="confirm_password" type="password" required minlength="6" autocomplete="new-password" placeholder="Digite a nova senha novamente">
             <button type="button" class="pw-toggle" aria-label="Mostrar senha" title="Mostrar senha">
               <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
             </button>
@@ -174,7 +200,7 @@
         </label>
 
         <div class="modalfoot" style="margin-top:20px">
-          <button type="submit" id="savePerfilBtn" class="primary">Salvar alterações</button>
+          <button type="submit" id="saveSenhaBtn" class="primary">Atualizar senha</button>
         </div>
       </form>
     </section>
