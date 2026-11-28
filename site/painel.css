@@ -91,10 +91,12 @@
 }
 .painel-header-top {
   width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 24px;
   height: 68px;
   gap: 24px;
 }
@@ -118,10 +120,13 @@
   width: 100%;
   background: var(--surface);
   border-top: 1px solid var(--line);
-  padding: 0 32px;
+  padding: 0;
 }
 .painel-subnav-inner {
-  margin: 0;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   gap: 18px;
