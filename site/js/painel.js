@@ -151,15 +151,28 @@ function initPropMap() {
 
 function renderMapDraw() {
   mapDrawLayer.clearLayers();
-  mapPoints.forEach(pt => window.L.circleMarker(pt, { radius: 6, color: '#fff', fillColor: '#1d4ed8', fillOpacity: 1 }).addTo(mapDrawLayer));
+  mapPoints.forEach((pt, idx) => {
+    const dotIcon = window.L.divIcon({
+      className: '',
+      html: '<div style="width:14px;height:14px;border-radius:50%;background:#1d4ed8;border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.45);cursor:grab;"></div>',
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+    });
+    const marker = window.L.marker(pt, { icon: dotIcon, draggable: true }).addTo(mapDrawLayer);
+    marker.on('dragend', (ev) => {
+      const pos = ev.target.getLatLng();
+      mapPoints[idx] = [pos.lat, pos.lng];
+      renderMapDraw();
+    });
+  });
   if (mapPoints.length > 1) window.L.polyline(mapPoints, { color: '#3b82f6', weight: 2 }).addTo(mapDrawLayer);
   if (mapPoints.length >= 3) window.L.polygon(mapPoints, { color: '#3b82f6', fillOpacity: 0.15 }).addTo(mapDrawLayer);
   $('undoMapPt').disabled = mapPoints.length === 0;
   updateHiddenInputs();
   const el = $('mapStatus');
   if (!mapPoints.length) el.textContent = 'Nenhuma posição marcada. Clique no mapa para começar.';
-  else if (mapPoints.length === 1) el.textContent = `📍 Posição marcada (${mapPoints[0][0].toFixed(5)}, ${mapPoints[0][1].toFixed(5)})`;
-  else el.textContent = mapPoints.length >= 3 ? `Polígono com ${mapPoints.length} pontos` : `${mapPoints.length} pontos — mais 1 para criar polígono`;
+  else if (mapPoints.length === 1) el.textContent = `📍 Posição marcada (${mapPoints[0][0].toFixed(5)}, ${mapPoints[0][1].toFixed(5)}) — arraste para ajustar`;
+  else el.textContent = mapPoints.length >= 3 ? `Polígono com ${mapPoints.length} pontos (arraste os pontos para ajustar)` : `${mapPoints.length} pontos — mais 1 para criar polígono`;
 }
 
 function updateHiddenInputs() {
@@ -249,7 +262,7 @@ function openNewProp() {
   $('photoInput').value = '';
   renderPhotoThumbs();
   mapPoints = [];
-  setTimeout(() => { initPropMap(); propMap.invalidateSize(); propMap.setView([-29.606,-52.192], 14); }, 80);
+  setTimeout(() => { initPropMap(); propMap.invalidateSize(); propMap.setView([-29.606,-52.192], 14); renderMapDraw(); }, 80);
   openDialog('propDialog');
 }
 
@@ -280,7 +293,8 @@ async function openEditProp(id) {
   mapPoints = Array.isArray(p.points) && p.points.length ? p.points : (p.lat && p.lng ? [[p.lat, p.lng]] : []);
   setTimeout(() => {
     initPropMap(); propMap.invalidateSize();
-    if (mapPoints.length) { propMap.setView(mapPoints[0], 17); renderMapDraw(); }
+    if (mapPoints.length) propMap.setView(mapPoints[0], 17);
+    renderMapDraw();
   }, 80);
   openDialog('propDialog');
 }
