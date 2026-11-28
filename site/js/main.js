@@ -1,4 +1,4 @@
-﻿import { readStorage, writeStorage, readFavorites, writeFavorites } from './storage.js';
+import { readStorage, writeStorage, readFavorites, writeFavorites } from './storage.js';
 import {
   money,
   fmt,
@@ -34,6 +34,8 @@ let draftLocation = null;
 let photoData = '';
 let contactMessage = '';
 let toastTimer;
+/** Proximity filter: { lat, lng, label } when user picks an address result */
+let nearbyCenter = null;
 
 /**
  * Returns all properties: Supabase rows first (if loaded), then
@@ -95,6 +97,21 @@ function hideDetail() {
   render();
 }
 
+/** Haversine distance in metres between two lat/lng points */
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+const NEARBY_RADIUS_M = 700;
+
 const mapCtrl = createMapController({
   onRender: () => render(),
   onSelect: (id, fly) => select(id, fly),
@@ -110,13 +127,17 @@ const mapCtrl = createMapController({
 });
 
 function getFiltered() {
-  return filterProperties(all(), {
-    search: $('search').value,
+  const base = filterProperties(all(), {
+    search: nearbyCenter ? '' : $('search').value,
     mode,
     fav,
     type,
     filters,
   });
+  if (!nearbyCenter) return base;
+  return base.filter(
+    (p) => haversine(nearbyCenter.lat, nearbyCenter.lng, p.lat, p.lng) <= NEARBY_RADIUS_M
+  );
 }
 
 function render() {
@@ -325,6 +346,8 @@ function toggleComp(id) {
 
 function resetAll() {
   filters = {};
+  nearbyCenter = null;
+  mapCtrl.clearGeoMarker();
   $('filterForm').reset();
   $('filterCount').textContent = '';
   $('search').value = '';
@@ -558,12 +581,16 @@ $('clearCompare').onclick = () => {
   refreshDetail();
 };
 $('search').oninput = () => {
+  nearbyCenter = null;
+  mapCtrl.clearGeoMarker();
   hideDetail();
   renderSuggestions();
 };
 $('clearSearch').onclick = () => {
   $('search').value = '';
   $('searchSuggest').hidden = true;
+  nearbyCenter = null;
+  mapCtrl.clearGeoMarker();
   hideDetail();
 };
 $('sort').onchange = render;
@@ -655,9 +682,42 @@ window.addEventListener('resize', () => mapCtrl.invalidateSize());
   }
 })();
 
+let geoTimer = null;
+let geoAbort = null;
+
+function renderSuggestBox(suggestions) {
+  const box = $('searchSuggest');
+  if (!suggestions.length) {
+    box.hidden = true;
+    box.innerHTML = '';
+    return;
+  }
+  box.innerHTML = suggestions
+    .map(
+      (s) =>
+        '<button type="button" data-suggest-kind="' +
+        s.kind +
+        '" data-suggest-val="' +
+        esc(s.value) +
+        '"' +
+        (s.lat !== undefined ? ' data-lat="' + s.lat + '" data-lng="' + s.lng + '"' : '') +
+        '><span>' +
+        (s.kind === 'address' ? icon('pin') + ' ' : '') +
+        esc(s.label) +
+        '</span><small>' +
+        esc(s.meta) +
+        '</small></button>'
+    )
+    .join('');
+  box.hidden = false;
+}
+
 function renderSuggestions() {
   const box = $('searchSuggest');
   const raw = $('search').value.trim();
+  clearTimeout(geoTimer);
+  if (geoAbort) { geoAbort.abort(); geoAbort = null; }
+
   if (!raw) {
     box.hidden = true;
     box.innerHTML = '';
@@ -695,32 +755,53 @@ function renderSuggestions() {
       })
     );
 
-  if (!suggestions.length) {
-    box.hidden = true;
-    box.innerHTML = '';
-    return;
+  renderSuggestBox(suggestions);
+
+  if (raw.length >= 3) {
+    geoTimer = setTimeout(async () => {
+      try {
+        geoAbort = new AbortController();
+        const url =
+          'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&countrycodes=br' +
+          '&viewbox=-52.28,-29.52,-52.08,-29.69&bounded=1&limit=4&q=' +
+          encodeURIComponent(raw + ', Venâncio Aires, RS');
+        const res = await fetch(url, {
+          signal: geoAbort.signal,
+          headers: { 'Accept-Language': 'pt-BR' },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!Array.isArray(data) || !data.length) return;
+        const addrSuggestions = data.map((item) => {
+          const a = item.address || {};
+          const road = a.road || a.pedestrian || a.residential || item.display_name.split(',')[0];
+          const num = a.house_number ? ', ' + a.house_number : '';
+          const suburb = a.suburb || a.neighbourhood || '';
+          const label = road + num + (suburb ? ' — ' + suburb : '');
+          return {
+            kind: 'address',
+            value: road + num,
+            label,
+            meta: 'Venâncio Aires · Endereço',
+            lat: Number(item.lat),
+            lng: Number(item.lon),
+          };
+        });
+        // Merge without duplicating if user hasn't cleared input
+        if ($('search').value.trim() === raw) {
+          renderSuggestBox([...suggestions, ...addrSuggestions]);
+        }
+      } catch {
+        // Ignore abort / network errors
+      }
+    }, 450);
   }
-  box.innerHTML = suggestions
-    .map(
-      (s) =>
-        '<button type="button" data-suggest-kind="' +
-        s.kind +
-        '" data-suggest-val="' +
-        esc(s.value) +
-        '"><span>' +
-        esc(s.label) +
-        '</span><small>' +
-        esc(s.meta) +
-        '</small></button>'
-    )
-    .join('');
-  box.hidden = false;
 }
 
 $('searchSuggest').addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-suggest-kind]');
   if (!btn) return;
-  const { suggestKind, suggestVal } = btn.dataset;
+  const { suggestKind, suggestVal, lat, lng } = btn.dataset;
   $('searchSuggest').hidden = true;
   if (suggestKind === 'property') {
     select(suggestVal);
@@ -729,6 +810,19 @@ $('searchSuggest').addEventListener('click', (e) => {
     qa('[data-type]').forEach((x) => x.classList.toggle('active', x.dataset.type === type));
     $('search').value = '';
     hideDetail();
+  } else if (suggestKind === 'address') {
+    const nLat = Number(lat);
+    const nLng = Number(lng);
+    nearbyCenter = { lat: nLat, lng: nLng, label: suggestVal };
+    $('search').value = suggestVal;
+    mapCtrl.flyToAddress(nLat, nLng);
+    hideDetail();
+    const count = getFiltered().length;
+    toast(
+      count
+        ? `${count} ${count === 1 ? 'imóvel próximo' : 'imóveis próximos'} a ${suggestVal}`
+        : `Nenhum imóvel cadastrado próximo a ${suggestVal}`
+    );
   } else {
     $('search').value = suggestVal;
     hideDetail();

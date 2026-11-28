@@ -109,6 +109,25 @@ export function createMapController({ onRender, onSelect, onMapError, onMapClick
     if (map) map.flyTo([lat, lng], Math.max(map.getZoom(), 18), { duration: 0.55 });
   }
 
+  /** Fly to a geocoded address and place a temporary pulsing marker */
+  let geoMarker = null;
+  function flyToAddress(lat, lng) {
+    if (!map) return;
+    if (geoMarker) { map.removeLayer(geoMarker); geoMarker = null; }
+    map.flyTo([lat, lng], 17, { duration: 0.75 });
+    geoMarker = L.circleMarker([lat, lng], {
+      radius: 9,
+      color: '#244D85',
+      fillColor: '#5B8FCC',
+      fillOpacity: 0.55,
+      weight: 2.5,
+    }).addTo(map).bindTooltip('Localização pesquisada', { permanent: false, direction: 'top' });
+  }
+
+  function clearGeoMarker() {
+    if (geoMarker && map) { map.removeLayer(geoMarker); geoMarker = null; }
+  }
+
   function centerCity() {
     map?.setView(CENTER, 14);
   }
@@ -178,6 +197,8 @@ export function createMapController({ onRender, onSelect, onMapError, onMapClick
     setLayer,
     renderMarkers,
     flyTo,
+    flyToAddress,
+    clearGeoMarker,
     centerCity,
     fitAll,
     startDraw,
