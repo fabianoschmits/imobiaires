@@ -722,6 +722,15 @@
   line-height: 1.45;
 }
 
+/* Map address search */
+.prop-addr-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 @media (max-width: 480px) {
   .auth-card { padding: 24px 18px; }
   .auth-card input { font-size: 16px; }

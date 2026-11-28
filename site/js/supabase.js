@@ -213,13 +213,16 @@ export async function fetchMyProperties(session, agencyId, adminMode = false) {
 
 export async function upsertProperty(session, prop) {
   const method = prop.id ? 'PATCH' : 'POST';
+  const newId = !prop.id ? crypto.randomUUID() : null;
+  const payload = { ...prop, created_by: session.user.id };
+  if (newId) payload.id = newId;
   const path = prop.id
     ? `/rest/v1/properties?id=eq.${prop.id}`
     : '/rest/v1/properties?select=id';
-  const payload = { ...prop, created_by: session.user.id };
-  if (!prop.id) payload.id = crypto.randomUUID();
   const data = await req(method, path, payload, session);
-  return method === 'POST' ? data?.[0] : prop;
+  // For new props, return the payload id directly (most reliable)
+  if (method === 'POST') return { id: newId, ...(data?.[0] || {}) };
+  return prop;
 }
 
 export async function deleteProperty(session, id) {

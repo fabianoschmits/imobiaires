@@ -806,6 +806,78 @@ $('welcomeDialog')?.addEventListener('click', (e) => {
   if (e.target === $('welcomeDialog')) closeWelcome();
 });
 
+/* ─── Property map address search ─── */
+let addrDebounce = null;
+
+async function geocodeAddr(q) {
+  const query = encodeURIComponent(q + ', Venâncio Aires, RS, Brasil');
+  const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=5&bounded=1&viewbox=-52.28,-29.52,-52.08,-29.69&accept-language=pt`;
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': 'ImobiAires/1.0' } });
+    return await res.json();
+  } catch { return []; }
+}
+
+function goToResult(item) {
+  const lat = parseFloat(item.lat);
+  const lon = parseFloat(item.lon);
+  propMap.setView([lat, lon], 17);
+  // drop a single point if map has no marks yet
+  if (!mapPoints.length) {
+    mapPoints.push([lat, lon]);
+    renderMapDraw();
+  }
+  $('propAddrAuto').hidden = true;
+  $('propAddrInput').value = item.display_name.split(',').slice(0, 2).join(',').trim();
+}
+
+$('propAddrInput')?.addEventListener('input', () => {
+  clearTimeout(addrDebounce);
+  const q = $('propAddrInput').value.trim();
+  if (q.length < 3) { $('propAddrAuto').hidden = true; return; }
+  addrDebounce = setTimeout(async () => {
+    const results = await geocodeAddr(q);
+    const auto = $('propAddrAuto');
+    if (!results.length) { auto.hidden = true; return; }
+    auto.innerHTML = results.map((r, i) => {
+      const label = r.display_name.split(',').slice(0, 3).join(',').trim();
+      return `<button type="button" class="painel-auto-item" data-addr-idx="${i}">${label}</button>`;
+    }).join('');
+    auto.__results = results;
+    auto.hidden = false;
+  }, 400);
+});
+
+$('propAddrAuto')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-addr-idx]');
+  if (!btn) return;
+  const results = $('propAddrAuto').__results || [];
+  const item = results[Number(btn.dataset.addrIdx)];
+  if (item) goToResult(item);
+});
+
+$('propAddrSearch')?.addEventListener('click', async () => {
+  const q = $('propAddrInput').value.trim();
+  if (!q) return;
+  const results = await geocodeAddr(q);
+  if (results.length) {
+    goToResult(results[0]);
+  } else {
+    toast('Endereço não encontrado em Venâncio Aires.');
+  }
+});
+
+$('propAddrInput')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); $('propAddrSearch')?.click(); }
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.prop-addr-wrap')) {
+    const auto = $('propAddrAuto');
+    if (auto) auto.hidden = true;
+  }
+});
+
 /* ─── Boot ─── */
 setupPhotoUpload();
 (async () => {
