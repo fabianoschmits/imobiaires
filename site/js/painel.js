@@ -343,35 +343,10 @@ function renderPhotoThumbs() {
 /* ─── Property form ─── */
 let editingId = null;
 
-function openNewProp() {
-  editingId = null;
-  photoItems = [];
-  $('propDialogEyebrow').textContent = 'NOVO ANÚNCIO';
-  $('propDialogTitle').textContent = 'Cadastrar imóvel';
-  $('propForm').reset();
-  $('photoInput').value = '';
-  renderPhotoThumbs();
-  mapPoints = [];
-  setTimeout(() => { initPropMap(); propMap.invalidateSize(); propMap.setView([-29.606,-52.192], 14); renderMapDraw(); }, 80);
-  openDialog('propDialog');
-}
-
-async function openEditProp(id) {
-  const props = await fetchMyProperties(session, myAgency?.id, adminMode);
-  const p = props.find(x => x.id === id);
-  if (!p) { toast('Imóvel não encontrado ou sem permissão.'); return; }
-  editingId = id;
-  const existingPhotos = Array.isArray(p.photos) && p.photos.length
-    ? p.photos
-    : (p.photo_url ? [p.photo_url] : []);
-  photoItems = existingPhotos.map((url) => ({ url }));
 function formatPriceComma(val) {
   const digits = String(val || '').replace(/\D/g, '').slice(0, 12);
   return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
 }
-$('propForm')?.elements?.price?.addEventListener('input', (e) => {
-  e.target.value = formatPriceComma(e.target.value);
-});
 
 function clearPropErrors() {
   const form = $('propForm');
@@ -392,6 +367,33 @@ function setFieldError(el, msg) {
   }
 }
 
+$('propForm')?.elements?.price?.addEventListener('input', (e) => {
+  e.target.value = formatPriceComma(e.target.value);
+});
+
+function openNewProp() {
+  editingId = null;
+  photoItems = [];
+  clearPropErrors();
+  $('propDialogEyebrow').textContent = 'NOVO ANÚNCIO';
+  $('propDialogTitle').textContent = 'Cadastrar imóvel';
+  $('propForm').reset();
+  $('photoInput').value = '';
+  renderPhotoThumbs();
+  mapPoints = [];
+  setTimeout(() => { initPropMap(); propMap.invalidateSize(); propMap.setView([-29.606,-52.192], 14); renderMapDraw(); }, 80);
+  openDialog('propDialog');
+}
+
+async function openEditProp(id) {
+  const props = await fetchMyProperties(session, myAgency?.id, adminMode);
+  const p = props.find(x => x.id === id);
+  if (!p) { toast('Imóvel não encontrado ou sem permissão.'); return; }
+  editingId = id;
+  const existingPhotos = Array.isArray(p.photos) && p.photos.length
+    ? p.photos
+    : (p.photo_url ? [p.photo_url] : []);
+  photoItems = existingPhotos.map((url) => ({ url }));
   $('propDialogEyebrow').textContent = 'EDITAR ANÚNCIO';
   $('propDialogTitle').textContent = 'Editar imóvel';
   clearPropErrors();
