@@ -848,6 +848,13 @@ $('searchSuggest').addEventListener('click', (e) => {
 
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.search')) $('searchSuggest').hidden = true;
+  if (
+    active &&
+    !e.target.closest('#panel, [data-open], .t360-marker, .leaflet-marker-icon, dialog')
+  ) {
+    hideDetail();
+    if (isMobile()) setPanel(false);
+  }
 });
 
 document.addEventListener('keydown', (e) => {
