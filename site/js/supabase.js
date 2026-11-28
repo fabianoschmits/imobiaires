@@ -121,12 +121,11 @@ export async function createAgency(session, { name, owner_name, creci, phone, lo
   return agency;
 }
 
-export async function updateAgency(session, agencyId, { name, owner_name, creci, phone, logo_url }) {
+export async function updateAgency(session, agencyId, { name, owner_name, creci, phone }) {
   const payload = { name, owner_name: owner_name || '', creci: creci || '', phone: phone || '' };
-  if (logo_url !== undefined) payload.logo_url = logo_url;
   const data = await req(
     'PATCH',
-    `/rest/v1/agencies?id=eq.${encodeURIComponent(agencyId)}&select=id,name,slug,phone,owner_name,creci,logo_url`,
+    `/rest/v1/agencies?id=eq.${encodeURIComponent(agencyId)}&select=id,name,slug,phone,owner_name,creci`,
     payload,
     session
   );
