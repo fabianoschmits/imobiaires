@@ -1,5 +1,5 @@
 'use strict';
-import { signIn, signUp, signOut, refreshSession, createAgency, getMyAgency, fetchMyProperties, upsertProperty, uploadPhoto, deleteProperty, upsertOffer, isAdmin } from './supabase.js';
+import { signIn, signUp, signOut, refreshSession, createAgency, updateAgency, updatePassword, getMyAgency, fetchMyProperties, upsertProperty, uploadPhoto, deleteProperty, upsertOffer, isAdmin } from './supabase.js';
 import { money, fmt, esc, renderIllustration } from './catalog.js';
 import { readStorage, writeStorage } from './storage.js';
 import { icon } from './icons.js';
@@ -54,7 +54,42 @@ async function showDash() {
   }
   banner.hidden = !adminMode;
   banner.textContent = adminMode ? 'Modo Admin — visualizando todos os imóveis do sistema.' : '';
+  const pubLink = $('navPublicPage');
+  if (pubLink) {
+    if (myAgency?.slug) {
+      pubLink.href = '/' + encodeURIComponent(myAgency.slug);
+      pubLink.hidden = false;
+    } else {
+      pubLink.hidden = true;
+    }
+  }
+  switchDashTab('anuncios');
   await renderDash();
+}
+
+function switchDashTab(tab) {
+  const isPerfil = tab === 'perfil';
+  $('anunciosView').hidden = isPerfil;
+  $('perfilView').hidden = !isPerfil;
+  $('navAnuncios').classList.toggle('active', !isPerfil);
+  $('navPerfil').classList.toggle('active', isPerfil);
+  if (isPerfil) fillPerfilForm();
+}
+
+function fillPerfilForm() {
+  const form = $('perfilForm');
+  if (!form) return;
+  form.elements.name.value = myAgency?.name || '';
+  form.elements.owner_name.value = myAgency?.owner_name || '';
+  form.elements.creci.value = myAgency?.creci || '';
+  form.elements.phone.value = myAgency?.phone || '';
+  form.elements.new_password.value = '';
+  const box = $('perfilLogoPreview');
+  if (box) {
+    box.innerHTML = myAgency?.logo_url
+      ? `<img src="${esc(myAgency.logo_url)}" alt="Logo">`
+      : icon('agency');
+  }
 }
 
 /* ─── Dashboard ─── */
@@ -374,6 +409,8 @@ document.addEventListener('click', async (e) => {
     showAuth(); return;
   }
   if (b.id === 'newPropBtn') { openNewProp(); return; }
+  if (b.id === 'navAnuncios' || b.id === 'backToAnuncios') { switchDashTab('anuncios'); return; }
+  if (b.id === 'navPerfil') { switchDashTab('perfil'); return; }
   if (b.id === 'cancelPropBtn') { closeDialog('propDialog'); return; }
   if (b.dataset.edit) { await openEditProp(b.dataset.edit); return; }
   if (b.dataset.delete) {
@@ -497,6 +534,55 @@ $('registerForm').onsubmit = async (e) => {
     btn.disabled = false; btn.textContent = 'Criar conta e entrar';
   }
 };
+
+/* ─── Profile form ─── */
+$('perfilLogoInput')?.addEventListener('change', (e) => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  if (f.size > 2 * 1024 * 1024 || !['image/jpeg', 'image/png', 'image/webp'].includes(f.type)) {
+    toast('Use JPG, PNG ou WebP até 2 MB');
+    e.target.value = '';
+    return;
+  }
+  const box = $('perfilLogoPreview');
+  if (box) box.innerHTML = `<img src="${URL.createObjectURL(f)}" alt="Logo">`;
+});
+
+$('perfilForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(e.target));
+  const btn = $('savePerfilBtn');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  try {
+    let logoUrl;
+    const logoFile = $('perfilLogoInput')?.files?.[0];
+    if (logoFile) {
+      logoUrl = await uploadPhoto(session, logoFile, 'logo');
+    }
+    if (myAgency) {
+      const updated = await updateAgency(session, myAgency.id, {
+        name: f.name.trim(),
+        owner_name: f.owner_name?.trim() || '',
+        creci: f.creci?.trim().toUpperCase() || '',
+        phone: f.phone?.trim() || '',
+        logo_url: logoUrl,
+      });
+      if (updated) myAgency = updated;
+    }
+    if (f.new_password && f.new_password.length >= 6) {
+      await updatePassword(session, f.new_password);
+    }
+    toast('Perfil atualizado com sucesso!');
+    $('perfilNewPassword').value = '';
+    await showDash();
+  } catch (err) {
+    toast('Erro ao salvar perfil: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Salvar alterações';
+  }
+});
 
 /* ─── Boot ─── */
 setupPhotoUpload();

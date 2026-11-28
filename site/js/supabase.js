@@ -121,6 +121,29 @@ export async function createAgency(session, { name, owner_name, creci, phone, lo
   return agency;
 }
 
+export async function updateAgency(session, agencyId, { name, owner_name, creci, phone, logo_url }) {
+  const payload = { name, owner_name: owner_name || '', creci: creci || '', phone: phone || '' };
+  if (logo_url !== undefined) payload.logo_url = logo_url;
+  const data = await req(
+    'PATCH',
+    `/rest/v1/agencies?id=eq.${encodeURIComponent(agencyId)}&select=id,name,slug,phone,owner_name,creci,logo_url`,
+    payload,
+    session
+  );
+  return data?.[0] || null;
+}
+
+export async function updatePassword(session, password) {
+  const res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    method: 'PUT',
+    headers: H(authHeader(session)),
+    body: JSON.stringify({ password }),
+  });
+  const data = await res.json();
+  if (!res.ok || data.error) throw new Error(data.msg || data.error_description || data.error || 'Erro ao atualizar senha');
+  return data;
+}
+
 export async function fetchAgencyBySlug(slug) {
   const data = await req(
     'GET',
