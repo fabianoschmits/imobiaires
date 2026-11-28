@@ -103,8 +103,9 @@ function fillPerfilForm() {
 }
 
 /* ─── Dashboard ─── */
+let props = [];
 async function renderDash() {
-  let props = [];
+  props = [];
   try {
     props = await fetchMyProperties(session, myAgency?.id, adminMode);
   } catch (err) {
