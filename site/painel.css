@@ -79,6 +79,7 @@
 
 /* Header */
 .painel-header {
+  width: 100%;
   background: var(--surface);
   border-bottom: 1px solid var(--line);
   display: flex;
@@ -89,6 +90,7 @@
   z-index: 100;
 }
 .painel-header-top {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -113,6 +115,7 @@
 /* Main area */
 /* Account sub-navigation bar inside header */
 .painel-subnav {
+  width: 100%;
   background: var(--surface);
   border-top: 1px solid var(--line);
   padding: 0 32px;
