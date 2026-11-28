@@ -56,25 +56,52 @@
 .location {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  padding: 8px 12px;
+  padding: 5px 10px;
   border-radius: var(--r-card);
   box-shadow: var(--shadow-sm);
   pointer-events: auto;
+  cursor: pointer;
+  max-width: 155px;
+  overflow: hidden;
+  transition: max-width 320ms var(--ease), padding 320ms var(--ease), gap 320ms var(--ease);
 }
-.location strong { font-size: 13px; font-weight: 600; color: var(--ink); display: block; }
-.location small { display: block; color: var(--muted); font-size: 11px; }
+.location > div { min-width: 0; }
+.location strong { font-size: 12px; font-weight: 600; color: var(--ink); display: block; white-space: nowrap; transition: font-size 320ms var(--ease); }
+.location small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 320ms var(--ease), opacity 240ms var(--ease);
+}
 .location button {
   color: var(--blue);
   display: grid;
   place-items: center;
   padding: 4px;
   border-radius: 4px;
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: width 320ms var(--ease), opacity 240ms var(--ease), padding 320ms var(--ease);
 }
+.location.expanded {
+  max-width: 280px;
+  padding: 8px 12px;
+  gap: 10px;
+}
+.location.expanded strong { font-size: 13px; }
+.location.expanded small { max-height: 20px; opacity: 1; }
+.location.expanded button { width: 26px; opacity: 1; pointer-events: auto; }
 .location button:hover { background: var(--light); }
 
 .dot {

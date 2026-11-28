@@ -485,6 +485,15 @@ document.addEventListener('click', (e) => {
     hideDetail();
     return;
   }
+  if (b.dataset.deal) {
+    const isSame = filters.negocio === b.dataset.deal;
+    filters.negocio = isSame ? '' : b.dataset.deal;
+    if ($('negocio')) $('negocio').value = filters.negocio;
+    qa('[data-deal]').forEach((x) => x.classList.toggle('active', !isSame && x === b));
+    $('filterCount').textContent = Object.values(filters).filter(Boolean).length || '';
+    hideDetail();
+    return;
+  }
   if (b.dataset.contact !== undefined && active) {
     const p = all().find((x) => x.id === active);
     const o = p.offers[Number(b.dataset.contact)];
@@ -601,7 +610,15 @@ $('mobileToggle').onclick = () => {
     setPanel(false);
   } else setPanel(true);
 };
-$('center').onclick = () => mapCtrl.centerCity();
+$('center').onclick = (e) => {
+  e.stopPropagation();
+  mapCtrl.centerCity();
+  q('.location')?.classList.remove('expanded');
+};
+q('.location')?.addEventListener('click', (e) => {
+  if (e.target.closest('#center')) return;
+  q('.location').classList.toggle('expanded');
+});
 $('showAll').onclick = () => mapCtrl.fitAll(getFiltered());
 $('sat').onclick = () => {
   mapCtrl.setLayer(false);
