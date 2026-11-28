@@ -70,6 +70,10 @@ function closeDialog(id) {
   $(id).close();
 }
 
+$('contactDialog')?.addEventListener('click', (e) => {
+  if (e.target === $('contactDialog')) closeDialog('contactDialog');
+});
+
 function isMobile() {
   return innerWidth <= 760;
 }
