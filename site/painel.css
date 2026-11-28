@@ -109,8 +109,7 @@
   padding: 0 24px;
 }
 .painel-subnav-inner {
-  max-width: 1120px;
-  margin: 0 auto;
+  margin: 0;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -414,8 +413,7 @@
   padding: 0 24px;
 }
 .painel-subnav-inner {
-  max-width: 1120px;
-  margin: 0 auto;
+  margin: 0;
   display: flex;
   align-items: center;
   gap: 6px;
