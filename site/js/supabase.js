@@ -100,14 +100,13 @@ export async function createAgency(session, { name, owner_name, creci, phone, lo
       .replace(/^-|-$/g, '') || 'imobiliaria';
   const [agency] = await req(
     'POST',
-    '/rest/v1/agencies?select=id,name,slug,phone,owner_name,creci,logo_url',
+    '/rest/v1/agencies?select=id,name,slug,phone,owner_name,creci',
     {
       name,
       slug,
       owner_name: owner_name || '',
       creci: creci || '',
       phone: phone || '',
-      logo_url: logo_url || null,
     },
     session
   );

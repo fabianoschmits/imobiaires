@@ -239,6 +239,52 @@
   </main>
 </div>
 
+<!-- WELCOME MODAL (first visit) -->
+<dialog id="welcomeDialog" class="painel-dialog">
+  <div class="welcome-body">
+    <div class="modalhead">
+      <div>
+        <div class="eyebrow">Bem-vindo ao ImobiAires</div>
+        <h2 style="margin:4px 0 0">Como funciona o seu painel</h2>
+      </div>
+      <button type="button" id="closeWelcomeX" class="icon-btn secondary" aria-label="Fechar">✕</button>
+    </div>
+    <div class="welcome-steps">
+      <div class="welcome-step">
+        <span class="welcome-num">1</span>
+        <div>
+          <strong>Cadastre seus imóveis</strong>
+          <p class="muted">Clique em <b>+ Novo imóvel</b>, adicione fotos, preço e descreva os diferenciais.</p>
+        </div>
+      </div>
+      <div class="welcome-step">
+        <span class="welcome-num">2</span>
+        <div>
+          <strong>Marque no mapa com precisão</strong>
+          <p class="muted">Busque a rua ou clique no mapa para marcar o ponto exato ou desenhar o perímetro do lote.</p>
+        </div>
+      </div>
+      <div class="welcome-step">
+        <span class="welcome-num">3</span>
+        <div>
+          <strong>Receba contatos no WhatsApp</strong>
+          <p class="muted">Em <b>Editar perfil</b>, cadastre seu WhatsApp para os interessados falarem direto com você.</p>
+        </div>
+      </div>
+      <div class="welcome-step">
+        <span class="welcome-num">4</span>
+        <div>
+          <strong>Pesquise e gerencie rápido</strong>
+          <p class="muted">Use a lupa ao lado de <b>+ Novo imóvel</b> para filtrar por título, bairro, preço ou tipo.</p>
+        </div>
+      </div>
+    </div>
+    <div class="modalfoot" style="margin-top:20px;justify-content:flex-end">
+      <button type="button" id="closeWelcomeBtn" class="primary">Começar agora</button>
+    </div>
+  </div>
+</dialog>
+
 <!-- PROPERTY FORM DIALOG -->
 <dialog id="propDialog" class="wide painel-dialog">
   <form id="propForm" novalidate>

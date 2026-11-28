@@ -683,6 +683,45 @@
   margin-top: 2px;
 }
 
+.welcome-body {
+  padding: 22px 24px;
+}
+.welcome-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+}
+.welcome-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.welcome-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.welcome-step strong {
+  display: block;
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.welcome-step p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 @media (max-width: 480px) {
   .auth-card { padding: 24px 18px; }
   .auth-card input { font-size: 16px; }

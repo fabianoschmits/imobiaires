@@ -39,6 +39,9 @@ async function showDash() {
   $('authScreen').hidden = true;
   $('dashScreen').hidden = false;
   adminMode = session?.user?.email === ADMIN_EMAIL;
+  if (!readStorage('welcomed', false)) {
+    openDialog('welcomeDialog');
+  }
   // Show admin banner if admin
   let banner = $('adminBanner');
   if (!banner) {
@@ -642,24 +645,17 @@ $('registerForm').onsubmit = async (e) => {
   btn.disabled = true; btn.textContent = 'Criando conta...';
   try {
     session = await signUp(f.email.trim(), f.password, f.name.trim(), f.phone?.trim());
+    if (!session?.access_token) {
+      session = await signIn(f.email.trim(), f.password);
+    }
     writeStorage('sb-session', session);
     if (session?.access_token) {
-      let logoUrl = null;
-      const logoFile = $('regLogoInput')?.files?.[0];
-      if (logoFile) {
-        logoUrl = await uploadPhoto(session, logoFile, 'logo').catch(() => null);
-      }
       myAgency = await createAgency(session, {
         name: f.name.trim(),
         owner_name: f.owner_name?.trim() || '',
         creci: f.creci?.trim().toUpperCase() || '',
         phone: f.phone?.trim() || '',
-        logo_url: logoUrl,
       });
-    } else {
-      showError('Conta criada! Confirme seu e-mail para continuar.');
-      btn.disabled = false; btn.textContent = 'Criar conta e entrar';
-      return;
     }
     await showDash();
   } catch {
@@ -796,6 +792,16 @@ $('perfilLogoInput')?.addEventListener('change', (e) => {
   const file = e.target.files?.[0];
   const nameEl = $('perfilLogoName');
   if (nameEl) nameEl.textContent = file ? file.name : '';
+});
+
+function closeWelcome() {
+  writeStorage('welcomed', true);
+  closeDialog('welcomeDialog');
+}
+$('closeWelcomeBtn')?.addEventListener('click', closeWelcome);
+$('closeWelcomeX')?.addEventListener('click', closeWelcome);
+$('welcomeDialog')?.addEventListener('click', (e) => {
+  if (e.target === $('welcomeDialog')) closeWelcome();
 });
 
 /* ─── Boot ─── */
