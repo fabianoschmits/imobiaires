@@ -78,44 +78,43 @@
 <!-- DASHBOARD SCREEN -->
 <div id="dashScreen" hidden>
   <header class="painel-header">
-    <a href="/" class="brand" aria-label="Voltar ao mapa">
-      <span class="logo" aria-hidden="true">
-        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg>
-      </span>
-      <span class="brand-copy">
-        <span class="brand-main"><span class="brand-word brand-word-1">Imobi</span><span class="brand-word brand-word-2">Aires</span></span>
-        <small>VENÂNCIO AIRES · RS</small>
-      </span>
-    </a>
-    <div class="painel-header-info">
-      <span id="sessionName" class="painel-agency-name"></span>
-      <a href="/" class="secondary">
+    <div class="painel-header-top">
+      <a href="/" class="brand" aria-label="Página inicial ImobiAires">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29S5 19 5 12a11 11 0 0 1 22 0c0 7-11 17-11 17Z"/><path d="m10 13 6-5 6 5M12 12v8h8v-8M15 20v-5h2v5"/></svg>
+        </span>
+        <span class="brand-copy">
+          <span class="brand-main"><span class="brand-word brand-word-1">Imobi</span><span class="brand-word brand-word-2">Aires</span></span>
+          <small>VENÂNCIO AIRES · RS</small>
+        </span>
+      </a>
+      <a href="/" class="painel-back-btn">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m0 0l6-6m-6 6l6 6"/></svg>
         Voltar ao mapa
       </a>
     </div>
-  </header>
 
-  <nav class="painel-subnav" aria-label="Menu da conta">
-    <div class="painel-subnav-inner">
-      <button id="navAnuncios" type="button" class="subnav-btn active">
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg>
-        Meus anúncios
-      </button>
-      <button id="navPerfil" type="button" class="subnav-btn">
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6"/></svg>
-        Editar perfil
-      </button>
-      <a id="navPublicPage" href="#" target="_blank" class="subnav-btn" hidden>
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
-        Minha página
-      </a>
-      <button id="logoutBtn" type="button" class="subnav-btn subnav-logout">
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-        Sair
-      </button>
-    </div>
-  </nav>
+    <nav class="painel-subnav" aria-label="Menu da conta">
+      <div class="painel-subnav-inner">
+        <button id="navAnuncios" type="button" class="subnav-btn active">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg>
+          Meus anúncios
+        </button>
+        <button id="navPerfil" type="button" class="subnav-btn">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6"/></svg>
+          Editar perfil
+        </button>
+        <a id="navPublicPage" href="#" target="_blank" class="subnav-btn" hidden>
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+          Minha página
+        </a>
+        <button id="logoutBtn" type="button" class="subnav-btn subnav-logout">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          Sair
+        </button>
+      </div>
+    </nav>
+  </header>
 
   <main class="painel-main">
     <div id="anunciosView">

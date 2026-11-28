@@ -39,11 +39,6 @@ async function showDash() {
   $('authScreen').hidden = true;
   $('dashScreen').hidden = false;
   adminMode = session?.user?.email === ADMIN_EMAIL;
-  $('sessionName').innerHTML = (myAgency?.logo_url ? `<img src="${esc(myAgency.logo_url)}" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover">` : '') +
-    esc(adminMode
-      ? 'Admin — ' + (myAgency?.name || 'ImobiAires')
-      : (myAgency?.name || session?.user?.email || 'Imobiliária')) +
-    (myAgency?.slug ? ` <a href="/${esc(myAgency.slug)}" target="_blank" style="font-size:12px;color:var(--blue);margin-left:4px;text-decoration:underline">/${esc(myAgency.slug)}</a>` : '');
   // Show admin banner if admin
   let banner = $('adminBanner');
   if (!banner) {

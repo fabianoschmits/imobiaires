@@ -79,33 +79,42 @@
 
 /* Header */
 .painel-header {
-  height: 70px;
   background: var(--surface);
   border-bottom: 1px solid var(--line);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  gap: 16px;
+  flex-direction: column;
+  padding: 0;
   position: sticky;
   top: 0;
   z-index: 100;
 }
-.painel-header-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.painel-agency-name {
-  font-weight: 600;
-  color: var(--ink);
-  font-size: 13.5px;
+.painel-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 60px;
+  gap: 16px;
+}
+.painel-back-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color var(--t-fast) var(--ease);
+  text-decoration: none;
 }
+.painel-back-btn:hover { color: var(--ink); }
+.painel-back-btn .ico { width: 16px; height: 16px; }
 
 /* Main area */
-/* Account sub-navigation bar below header */
+/* Account sub-navigation bar inside header */
 .painel-subnav {
   background: var(--surface);
-  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
   padding: 0 24px;
 }
 .painel-subnav-inner {
@@ -406,44 +415,7 @@
 
 /* Responsive */
 @media (max-width: 760px) {
-  /* Account sub-navigation bar below header */
-.painel-subnav {
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-  padding: 0 24px;
-}
-.painel-subnav-inner {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.painel-subnav-inner::-webkit-scrollbar { display: none; }
-.subnav-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 12px 14px;
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
-}
-.subnav-btn:hover { color: var(--ink); }
-.subnav-btn.active {
-  color: var(--blue);
-  font-weight: 600;
-  border-bottom-color: var(--blue);
-}
-.subnav-logout {
-  margin-left: auto;
-  color: var(--danger);
-}
-.subnav-logout:hover { color: #912018; }
+  .painel-subnav { padding: 0 14px; }
 
 /* Profile editing view */
 .perfil-card {
@@ -495,9 +467,11 @@
 .painel-main { padding: 20px 14px 48px; }
   .painel-form-body { grid-template-columns: 1fr; }
   .painel-top { flex-wrap: wrap; }
-  .painel-header { height: auto; min-height: 60px; flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
-  .painel-header-info { flex-wrap: wrap; gap: 6px; width: 100%; justify-content: flex-end; }
-  .painel-agency-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+  .painel-header { padding: 0; }
+  .painel-header-top { padding: 0 14px; height: 56px; }
+  .painel-back-btn span { display: none; }
+  .painel-back-btn { gap: 0; }
+  .painel-back-btn .ico { width: 20px; height: 20px; }
   .painel-stats { grid-template-columns: 1fr; }
   .stat-card + .stat-card { border-left: 0; border-top: 1px solid var(--line); }
   .painel-dialog form { padding: 18px 16px; }
