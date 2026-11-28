@@ -214,16 +214,26 @@
   gap: 12px;
 }
 
-/* Grouped stats bar with vertical dividers */
+/* Grouped stats bar — horizontal scroll row */
 .painel-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  scrollbar-width: none;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--r-card);
   margin-bottom: 24px;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
 }
-.stat-card { padding: 14px 20px; min-width: 0; }
+.painel-stats::-webkit-scrollbar { display: none; }
+.stat-card {
+  padding: 16px 22px;
+  min-width: 150px;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
 .stat-card + .stat-card { border-left: 1px solid var(--line); }
 .stat-card small {
   display: block;
@@ -472,8 +482,8 @@
   .painel-back-btn span { display: none; }
   .painel-back-btn { gap: 0; }
   .painel-back-btn .ico { width: 20px; height: 20px; }
-  .painel-stats { grid-template-columns: 1fr; }
-  .stat-card + .stat-card { border-left: 0; border-top: 1px solid var(--line); }
+  .painel-stats { margin-bottom: 20px; }
+  .stat-card { min-width: 130px; padding: 14px 18px; }
   .painel-dialog form { padding: 18px 16px; }
   .painel-dialog .formgrid { grid-template-columns: 1fr; }
   .painel-dialog .span2 { grid-column: span 1; }
